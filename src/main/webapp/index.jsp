@@ -72,8 +72,8 @@
     <h1>Welcome to Job Portal</h1>
 
     <div class="btn-container">
-        <a href="./AuthenticationServlet" class="btn">Login</a>
-        <a href="register.jsp" class="btn">Signup</a>
+        <a href="login.jsp" class="btn">Login</a>
+        <a href="Signup.jsp" class="btn">Signup</a>
     </div>
 </div>
 

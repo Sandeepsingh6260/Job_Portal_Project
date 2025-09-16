@@ -1,5 +1,5 @@
 package com.jobportal.daoimpl;
 
-public class UserDaoImpl {
+public class SeekerDaoImpl {
 
 }
