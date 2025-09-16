@@ -1,5 +1,5 @@
 package com.jobportal.servicedao;
 
-public interface UserServiceDao {
+public interface IUserService {
 
 }
