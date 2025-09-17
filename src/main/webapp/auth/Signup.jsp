@@ -109,8 +109,6 @@ to {
 }
 
 }
-
-/* Error styling */
 .error {
 	color: red;
 	font-size: 13px;
@@ -120,110 +118,112 @@ to {
 </head>
 <body>
 	<div class="frame">
-		<!-- Left side -->
-		<div class="left">
-			<h1>Register</h1>
-			<form id="registrationForm" action="../AuthenticationServlet" method="post">
-				<label for="user_name">Name</label> <input type="text"
-					id="user_name" name="user_name" required> <label
-					for="user_email">Email</label> <input type="email" id="user_email"
-					name="user_email" required> <label for="user_password">Password</label>
-				<input type="password" id="user_password" name="user_password"
-					required minlength="6"> <label for="location">Location</label>
-				<input type="text" id="location" name="location"> <label
-					for="user_role">Role</label> <select id="user_role"
-					name="user_role" required onchange="swapForm()">
-					<option value="job_seeker" selected>Job Seeker</option>
-					<option value="recruiter">Recruiter</option>
-				</select>
-		</div>
+    <!-- Left side -->
+    <div class="left">
+        <h1>Register</h1>
+        <form id="registrationForm" action="../AuthenticationServlet" method="post" enctype="multipart/form-data">
+            <label for="user_name">Name</label>
+            <input type="text" id="user_name" name="user_name" required>
 
-		<!-- Right side -->
-		<div class="right">
-			<!-- Job Seeker Fields -->
-			<div id="jobSeekerFields" class="form-section">
-				<h2>Job Seeker Details</h2>
-				<!--   <label for="skills">Skills</label>
-        <input type="text" id="skills" name="skills" required> -->
-				<label for="skills">Skills</label>
-				<div id="skillsContainer">
-					<input type="text" name="skills" placeholder="Enter a skill">
-				</div>
-				<button type="button" onclick="addSkill()">+ Add Skill</button>
+            <label for="user_email">Email</label>
+            <input type="email" id="user_email" name="user_email" required>
 
-				<label for="experience">Experience (years)</label> <input
-					type="number" id="experience" name="experience" min="0" required>
+            <label for="user_password">Password</label>
+            <input type="password" id="user_password" name="user_password" required minlength="6">
 
-				<label for="resume_path">Resume Upload</label> <input type="file"
-					id="resume_path" name="resume_path" required>
-			</div>
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location">
 
-			<!-- Recruiter Fields -->
-			<div id="recruiterFields" class="form-section">
-				<h2>Recruiter Details</h2>
-				<label for="company_name">Company Name</label> <input type="text"
-					id="company_name" name="company_name"> <label
-					for="company_location">Company Location</label> <input type="text"
-					id="company_location" name="company_location"> <label
-					for="company_description">Company Description</label>
-				<textarea id="company_description" name="company_description"
-					rows="3"></textarea>
-			</div>
+            <label for="user_role">Role</label>
+            <select id="user_role" name="user_role" required onchange="swapForm()">
+                <option value="JOB_SEEKER" selected>Job Seeker</option>
+                <option value="RECUITER">Recruiter</option>
+            </select>
+    </div>
 
-			<button type="submit" name="action" value="signup">Register</button>
-			</form>
-		</div>
-	</div>
+    <!-- Right side -->
+    <div class="right">
+        <!-- Job Seeker Fields -->
+        <div id="jobSeekerFields" class="form-section">
+            <h2>Job Seeker Details</h2>
+            <label for="skills">Skills</label>
+            <div id="skillsContainer">
+                <input type="text" name="skills[]" placeholder="Enter a skill">
+            </div>
+            <button type="button" onclick="addSkill()">+ Add Skill</button>
+
+            <label for="experience">Experience (years)</label>
+            <input type="number" id="experience" name="experience" min="0">
+
+            <label for="resume_path">Resume Upload</label>
+            <input type="file" id="resume_path" name="resume_path">
+        </div>
+
+        <!-- Recruiter Fields -->
+        <div id="recruiterFields" class="form-section">
+            <h2>Recruiter Details</h2>
+            <label for="company_name">Company Name</label>
+            <input type="text" id="company_name" name="company_name">
+
+            <label for="company_location">Company Location</label>
+            <input type="text" id="company_location" name="company_location">
+
+            <label for="company_description">Company Description</label>
+            <textarea id="company_description" name="company_description" rows="3"></textarea>
+        </div>
+
+        <button type="submit" name="action" value="signup">Register</button>
+    </div>
+</form>
+</div>
 
 	<script>
-		// Show Job Seeker fields by default
-		window.onload = function() {
-			swapForm();
+// Show correct section on load
+window.onload = swapForm;
+
+function swapForm() {
+	const role = document.getElementById("user_role").value;
+	const jobSeekerFields = document.getElementById("jobSeekerFields");
+	const recruiterFields = document.getElementById("recruiterFields");
+
+	if (role === "job_seeker") {
+		jobSeekerFields.style.display = "block";
+		recruiterFields.style.display = "none";
+	} else {
+		jobSeekerFields.style.display = "none";
+		recruiterFields.style.display = "block";
+	}
+}
+
+// Add another skill input
+function addSkill() {
+	const container = document.getElementById("skillsContainer");
+	const input = document.createElement("input");
+	input.type = "text";
+	input.name = "skills[]";
+	input.placeholder = "Enter another skill";
+	container.appendChild(input);
+}
+
+// Form validation
+function validateForm() {
+	const role = document.getElementById("user_role").value;
+
+	if(role === "job_seeker") {
+		const skillsInputs = document.querySelectorAll("#skillsContainer input");
+		let skillsFilled = Array.from(skillsInputs).some(input => input.value.trim() !== "");
+		if(!skillsFilled || !document.getElementById("experience").value || !document.getElementById("resume_path").value){
+			alert("Please fill all Job Seeker fields!");
+			return false;
 		}
-
-		function swapForm() {
-			const role = document.getElementById("user_role").value;
-			const jobSeekerFields = document.getElementById("jobSeekerFields");
-			const recruiterFields = document.getElementById("recruiterFields");
-
-			if (role === "job_seeker") {
-				jobSeekerFields.style.display = "block";
-				recruiterFields.style.display = "none";
-			} else {
-				recruiterFields.style.display = "block";
-				jobSeekerFields.style.display = "none";
-			}
+	} else {
+		if(!document.getElementById("company_name").value.trim() || !document.getElementById("company_location").value.trim()){
+			alert("Please fill all Recruiter fields!");
+			return false;
 		}
-
-		// Basic validation
-		function validateForm() {
-			const role = document.getElementById("user_role").value;
-
-			if (role === "job_seeker") {
-				if (!document.getElementById("skills").value
-						|| !document.getElementById("experience").value
-						|| !document.getElementById("resume_path").value) {
-					alert("Please fill all Job Seeker fields!");
-					return false;
-				}
-			} else if (role === "recruiter") {
-				if (!document.getElementById("company_name").value
-						|| !document.getElementById("company_location").value) {
-					alert("Please fill all Recruiter fields!");
-					return false;
-				}
-			}
-
-			return true; // allow submit
-		}
-		function addSkill() {
-			const container = document.getElementById("skillsContainer");
-			const input = document.createElement("input");
-			input.type = "text";
-			input.name = "skills"; // Same name so server collects into array
-			input.placeholder = "Enter another skill";
-			container.appendChild(input);
-		}
-	</script>
+	}
+	return true;
+}
+</script>
 </body>
 </html>
