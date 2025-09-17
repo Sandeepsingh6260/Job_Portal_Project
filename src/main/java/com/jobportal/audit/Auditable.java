@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 public class Auditable {
 	private Timestamp created_at;
 	private Timestamp updated_at;
-	private  Boolean status;
+	private Boolean status;
 	
 	private  Boolean isDeleted;
 	public Auditable() {
