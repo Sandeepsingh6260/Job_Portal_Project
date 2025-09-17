@@ -1,5 +1,5 @@
 package com.jobportal.dao;
 
-public interface Userdao {
+public interface Seekerdao {
 
 }
