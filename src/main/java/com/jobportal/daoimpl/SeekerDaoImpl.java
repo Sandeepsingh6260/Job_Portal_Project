@@ -40,18 +40,18 @@ public class SeekerDaoImpl implements Seekerdao {
 			
 			else if(user.getUser_role() == RoleType.RECRUITER) 
 			{
-				System.out.println("recruiter");
+//				System.out.println("recruiter   "+user.getCompany_id());
 
 				sql = "INSERT INTO users (user_id,user_name,user_email,user_password,location,user_role,company_id) "
 						+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
-				pst = con.prepareStatement(sql);
-				pst.setString(1, user.getUser_id());
-				pst.setString(2, user.getUser_name());
-				pst.setString(3, user.getUser_email());
-				pst.setString(4, user.getUser_password());
-				pst.setString(5, user.getLocation());
-				pst.setString(6, user.getUser_role().name());
-				pst.setString(7, user.getCompany_id());
+				 pst = con.prepareStatement(sql);
+		            pst.setString(1, user.getUser_id());
+		            pst.setString(2, user.getUser_name());
+		            pst.setString(3, user.getUser_email());
+		            pst.setString(4, user.getUser_password());
+		            pst.setString(5, user.getLocation());
+		            pst.setString(6, user.getUser_role().name());
+		            pst.setString(7, user.getCompany_id());
 			}
 			return pst.executeUpdate() > 0;
 		} catch (SQLException e) {
