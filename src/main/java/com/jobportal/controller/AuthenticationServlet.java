@@ -5,11 +5,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+
 
 import java.io.IOException;
-import java.util.Random;
-import java.util.UUID;
+
 
 /**
  * Servlet implementation class AuthenticationServlet
@@ -31,7 +30,7 @@ public class AuthenticationServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String action= request.getParameter("action");
-		System.out.println("=============>>  "+action);
+		System.out.println("=============>>  this is new  "+action);
 		switch (action) {
 		case "signup": {
 			signup(request,response);
@@ -39,9 +38,7 @@ public class AuthenticationServlet extends HttpServlet {
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + action);
-		}
-		
-		
+		}	
 	}
 
 	
@@ -53,16 +50,57 @@ public class AuthenticationServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-private void signup(HttpServletRequest request, HttpServletResponse response) {
-		System.err.println("---------------->>  "+request.getParameter("user_name"));
-		 String[] skillsArray=request.getParameterValues("skills");
-		 for (String string : skillsArray) {
-			System.out.println(string);
-		}
-		try {
-			Part part=request.getPart("resume_path");
-		} catch (IOException | ServletException e) {
-			e.printStackTrace();
-		}
-	}
-}
+	
+	
+			private void signup(HttpServletRequest request, HttpServletResponse response) {
+				if(request.getParameter("user_role").equalsIgnoreCase("job_seeker"))
+				{
+				    String[] skillsArray = request.getParameterValues("skills");
+				 
+				    String user_name= request.getParameter("user_name");
+				    String user_email = request.getParameter("user_email");
+				    String user_password = request.getParameter("user_password");
+				    String location = request.getParameter("location");
+				    String user_role = request.getParameter("user_role");
+				    				    
+				    String skillsCsv = null;
+				    if (skillsArray != null) {
+				        skillsCsv = String.join(",", skillsArray);
+				    }
+				    
+				    String experience = request.getParameter("experience");
+				    
+				    
+				    System.out.println("Name: " + user_name);
+				    System.out.println("Email: " + user_email);
+				    System.out.println("Password: " + user_password);
+				    System.out.println("Location: " + location);
+				    System.out.println("Role: " + user_role);
+				    System.out.println("Experience: " + experience);
+				    System.out.println("Skills CSV: " + skillsCsv);
+				    
+			    }
+				else if(request.getParameter("user_role").equalsIgnoreCase("recruiter"))
+				{
+						String user_name= request.getParameter("user_name");
+					    String user_email = request.getParameter("user_email");
+					    String user_password = request.getParameter("user_password");
+					    String location = request.getParameter("location");
+					    String user_role = request.getParameter("user_role");
+					    String company_name = request.getParameter("company_name");
+					    String company_location = request.getParameter("company_location");
+					    String company_description = request.getParameter("company_description");
+					    
+					    
+					    System.out.println("Name: " + user_name);
+					    System.out.println("Email: " + user_email);
+					    System.out.println("Password: " + user_password);
+					    System.out.println("Location: " + location);
+					    System.out.println("Role: " + user_role);
+					    System.out.println("Experience: " + company_name);
+					    System.out.println("Skills CSV: " + company_location);
+					    System.out.println("Name: " + company_description);
+					    
+			        }
+			   }
+			}
