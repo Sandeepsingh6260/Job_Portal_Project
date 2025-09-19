@@ -14,35 +14,7 @@ public class User extends Auditable {
     private String experience;
     private String resumePath;   
     private RoleType user_role;
-    public String getCompany_name() {
-		return company_name;
-	}
-
-	public void setCompany_name(String company_name) {
-		this.company_name = company_name;
-	}
-
-	public String getCompany_description() {
-		return company_description;
-	}
-
-	public void setCompany_description(String company_description) {
-		this.company_description = company_description;
-	}
-
-	public String getCompany_location() {
-		return company_location;
-	}
-
-	public void setCompany_location(String company_location) {
-		this.company_location = company_location;
-	}
-
-	private String company_id;
-    
-    private String company_name;
-    private String company_description;
-    private String company_location;
+    private String company_id;
     
     public User() {
 		super();

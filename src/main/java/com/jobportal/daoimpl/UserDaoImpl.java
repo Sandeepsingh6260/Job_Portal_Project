@@ -4,16 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.jobportal.dao.Seekerdao;
+import com.jobportal.dao.IUserDao;
 import com.jobportal.enums.RoleType;
 import com.jobportal.model.User;
 import com.jobportal.util.DbConnection;
 
-public class SeekerDaoImpl implements Seekerdao {
+public class UserDaoImpl implements IUserDao {
 	private Connection con;
 	private PreparedStatement pst;
 
-	public SeekerDaoImpl() {
+	public UserDaoImpl() {
 		con = DbConnection.getConnection();
 	}
 

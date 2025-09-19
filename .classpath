@@ -13,8 +13,12 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Users/Victus/Downloads/cloudinary-http44-1.28.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Victus/Downloads/cloudinary-http44-1.35.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Victus/Downloads/commons-lang3-3.15.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/sandeep singh/Downloads/jakarta.servlet.jsp.jstl-3.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/sandeep singh/Downloads/jakarta.servlet.jsp.jstl-api-3.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/sandeep singh/Downloads/commons-logging-1.2 (1).jar"/>
+	<classpathentry kind="lib" path="C:/Users/sandeep singh/Downloads/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/sandeep singh/Downloads/commons-codec-1.15.jar"/>
+	<classpathentry kind="lib" path="C:/Users/sandeep singh/Downloads/httpcore-4.4.16.jar"/>
+	<classpathentry kind="lib" path="C:/Users/sandeep singh/Downloads/httpclient-4.5.14.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

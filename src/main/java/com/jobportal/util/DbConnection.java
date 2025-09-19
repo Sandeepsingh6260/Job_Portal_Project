@@ -8,7 +8,7 @@ public class DbConnection {
 	private static final String DB_NAME="job_portal";
 	private static final String DB_URL="jdbc:mysql://localhost:3306/"+DB_NAME;
 	private static final String DB_USER="root";
-	private static final String DB_PASSWORD="manoj123";
+	private static final String DB_PASSWORD="Sandeep@#1";
 	public static Connection con=null;
 
 	public static Connection getConnection() {

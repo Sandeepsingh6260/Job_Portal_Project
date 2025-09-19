@@ -1,4 +1,4 @@
-package com.jobportal.serviceimpl;
+package com.jobportal.daoimpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
