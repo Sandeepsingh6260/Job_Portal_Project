@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +13,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg") 
-                no-repeat center center/cover;
+    background: url("https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg") no-repeat center center/cover;
     font-family: "Segoe UI", sans-serif;
 }
 
@@ -22,7 +23,6 @@ body {
     box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.3);
     width: 400px;
     padding: 35px 30px;
-    animation: fadeIn 1s ease-in-out;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,7 +30,7 @@ body {
 
 h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     color: #333;
     font-size: 28px;
     font-weight: 700;
@@ -48,7 +48,7 @@ form label {
 input {
     width: 100%;
     padding: 12px 14px;
-    margin-top: 8px;
+    margin-top: 5px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 14px;
@@ -66,7 +66,7 @@ button {
     padding: 12px 40px;
     background: linear-gradient(90deg, #4facfe, #00f2fe);
     border: none;
-    border-radius: 25px; /* pill shape */
+    border-radius: 25px;
     color: white;
     font-size: 15px;
     font-weight: bold;
@@ -98,35 +98,44 @@ button:hover {
     color: #00f2fe;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.error {
+    color: red;
+    font-size: 13px;
+    margin-top: 5px;
 }
 </style>
 </head>
 <body>
-    
-<form action="${pageContext.request.contextPath}/AuthenticationServlet" method="post">
 
+<form action="${pageContext.request.contextPath}/AuthenticationServlet" method="post">
     <div class="frame">
         <h1>Login</h1>
 
-        <!-- Hidden dummy fields (prevent autofill) -->
+        <!-- Hidden dummy fields to prevent autofill -->
         <input type="text" style="display:none">
         <input type="password" style="display:none">
 
+        <!-- Email -->
         <label for="user_email">Email</label>
-        <input type="email" id="user_email" name="user_email" placeholder="Enter your email">
+        <input type="email" id="user_email" name="user_email" 
+               placeholder="Enter your email" 
+               value="<%= request.getAttribute("user_email_val") != null ? request.getAttribute("user_email_val") : "" %>">
+        <div class="error">
+            <%= request.getAttribute("emailError") != null ? request.getAttribute("emailError") : "" %>
+        </div>
 
+        <!-- Password -->
         <label for="user_password">Password</label>
-        <input type="password" id="user_password" name="user_password" placeholder="Enter your password" >
-		
+        <input type="password" id="user_password" name="user_password" placeholder="Enter your password">
+        <div class="error">
+            <%= request.getAttribute("passwordError") != null ? request.getAttribute("passwordError") : "" %>
+        </div>
+
+        <!-- Invalid login -->
+        <div class="error">
+            <%= request.getAttribute("loginError") != null ? request.getAttribute("loginError") : "" %>
+        </div>
+
         <button type="submit" name="action" value="login">Login</button>
 
         <div class="extra-links">

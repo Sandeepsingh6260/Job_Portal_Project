@@ -3,12 +3,12 @@ package com.jobportal.daoimpl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.UUID;
+
 
 import com.jobportal.dao.ICompanyDao;
 import com.jobportal.model.Company;
-import com.jobportal.payload.request.UserRequest;
-import com.jobportal.payload.response.CompnayResponse;
+
+
 import com.jobportal.util.DbConnection;
 
 public class CompnayDaoImpl  implements ICompanyDao{

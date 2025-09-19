@@ -1,14 +1,13 @@
 package com.jobportal.service.impl;
 
-import java.util.UUID;
+
 
 import com.jobportal.dao.IUserDao;
 import com.jobportal.daoimpl.CompnayDaoImpl;
 import com.jobportal.daoimpl.UserDaoImpl;
-import com.jobportal.enums.RoleType;
-import com.jobportal.model.Company;
+
 import com.jobportal.model.User;
-import com.jobportal.payload.request.UserRequest;
+
 import com.jobportal.service.IUserService;
 
 public class UserServiceImpl implements IUserService {

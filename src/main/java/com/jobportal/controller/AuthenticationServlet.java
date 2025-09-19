@@ -18,20 +18,19 @@ import com.jobportal.util.AppUtil;
 
 @WebServlet("/AuthenticationServlet")
 public class AuthenticationServlet extends HttpServlet {
-<<<<<<< HEAD
+
 	
 	private static final long serialVersionUID = 1L;
-	IUserService userService ;
-=======
+	IUserService userService1 ;
 
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID1 = 1L;
 	IUserService userService;
->>>>>>> bfaa16c295886a17e0cfed24a69f658f34a4a169
 	ICompanyService companyService;
 
 	public AuthenticationServlet() {
 		super();
-		userService = new UserServiceImpl();
+		userService1 = new UserServiceImpl();
 		companyService = new CompanyServiceImpl();
 	}
 
@@ -188,7 +187,7 @@ public class AuthenticationServlet extends HttpServlet {
 			companyService.save(company);
 		}
 
-		User user = userService.signup(req);
+		User user = userService1.signup(req);
 
 		if (user != null) {
 			request.setAttribute("successMsg", "Signup successful: " + user.getUser_name());
@@ -206,20 +205,30 @@ public class AuthenticationServlet extends HttpServlet {
 	    String email = request.getParameter("user_email");
 	    String password = request.getParameter("user_password");
 
-	    // Server-side validation
+	    boolean hasError = false;
+
+	    // Email validation
 	    if (email == null || email.isBlank()) {
-	        request.setAttribute("error", "Email is required!");
-	        request.getRequestDispatcher("./auth/login.jsp").forward(request, response);
-	        return;
+	        request.setAttribute("emailError", "Email is required!");
+	        hasError = true;
 	    }
 
+	    // Password validation
 	    if (password == null || password.isBlank()) {
-	        request.setAttribute("error", "Password is required!");
+	        request.setAttribute("passwordError", "Password is required!");
+	        hasError = true;
+	    }
+
+	    // Entered value preserve करना
+	    request.setAttribute("user_email_val", email);
+
+	    if (hasError) {
 	        request.getRequestDispatcher("./auth/login.jsp").forward(request, response);
 	        return;
 	    }
 
-	    User user = userService.login(email, password);
+	    // login check
+	    User user = userService1.login(email, password);
 
 	    if (user != null) {
 	        HttpSession session = request.getSession();
@@ -231,7 +240,8 @@ public class AuthenticationServlet extends HttpServlet {
 	            response.sendRedirect("Recruiter.jsp");
 	        }
 	    } else {
-	        request.setAttribute("error", "Invalid Email or Password!");
+	        // Wrong credentials
+	        request.setAttribute("loginError", "Invalid Email or Password!");
 	        request.getRequestDispatcher("./auth/login.jsp").forward(request, response);
 	    }
 	}

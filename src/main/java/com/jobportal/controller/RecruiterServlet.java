@@ -3,7 +3,7 @@ package com.jobportal.controller;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.jobportal.enums.RoleType;
+
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
