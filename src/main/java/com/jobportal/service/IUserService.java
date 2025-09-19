@@ -6,4 +6,6 @@ import com.jobportal.payload.request.UserRequest;
 public interface IUserService {
 	User signup(User request);
 
+	User login(String email, String password);
+
 }

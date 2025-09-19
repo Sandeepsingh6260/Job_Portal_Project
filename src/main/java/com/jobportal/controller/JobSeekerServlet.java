@@ -36,6 +36,7 @@ public class JobSeekerServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		System.out.println("joobseeker ");
 		String user_id=UUID.randomUUID().toString();
 		String resume_id=UUID.randomUUID().toString();
 		

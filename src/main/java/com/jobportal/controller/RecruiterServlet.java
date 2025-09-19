@@ -51,7 +51,8 @@ public class RecruiterServlet extends HttpServlet {
                 password == null || password.trim().isEmpty() ||
                 !password.equals(confirmPassword) ||
                 companyName == null || companyName.trim().isEmpty() ||
-                location == null || location.trim().isEmpty()) {
+                location == null || location.trim().isEmpty()) 
+            {
                 
                 request.setAttribute("errorMessage", " Please fill all required fields and confirm password correctly.");
                 request.getRequestDispatcher("recruiter.jsp").forward(request, response);

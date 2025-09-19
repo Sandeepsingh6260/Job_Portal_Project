@@ -43,4 +43,12 @@ public class UserServiceImpl implements IUserService {
 
         return null;
     }
+	
+	
+	@Override
+	public User login(String email, String password) {
+	    return userService.login(email, password);  
+	}
+
+
 }

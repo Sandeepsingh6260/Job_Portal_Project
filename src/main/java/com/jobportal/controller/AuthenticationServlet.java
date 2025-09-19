@@ -1,5 +1,6 @@
 package com.jobportal.controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.util.UUID;
 import com.jobportal.enums.RoleType;
 import com.jobportal.model.Company;
 import com.jobportal.model.User;
-import com.jobportal.payload.request.UserRequest;
 import com.jobportal.service.ICompanyService;
 import com.jobportal.service.IUserService;
 import com.jobportal.service.impl.CompanyServiceImpl;
@@ -17,6 +17,8 @@ import com.jobportal.util.AppUtil;
 
 @WebServlet("/AuthenticationServlet")
 public class AuthenticationServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
 	IUserService userService ;
 	ICompanyService companyService;
 
@@ -32,6 +34,19 @@ public class AuthenticationServlet extends HttpServlet {
 		if ("signup".equals(action)) {
 			signup(request, response);
 		}
+		else if ("login".equalsIgnoreCase(action)) {
+			System.out.println("garima");
+			try {
+				login(request,response);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ServletException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -84,4 +99,38 @@ public class AuthenticationServlet extends HttpServlet {
 			response.getWriter().println("Signup failed!");
 		}
 	}
+	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	    String email = request.getParameter("user_email");
+	    String password = request.getParameter("user_password");
+
+	    // Server-side validation
+	    if (email == null || email.isBlank()) {
+	        request.setAttribute("error", "Email is required!");
+	        request.getRequestDispatcher("./auth/login.jsp").forward(request, response);
+	        return;
+	    }
+
+	    if (password == null || password.isBlank()) {
+	        request.setAttribute("error", "Password is required!");
+	        request.getRequestDispatcher("./auth/login.jsp").forward(request, response);
+	        return;
+	    }
+
+	    User user = userService.login(email, password);
+
+	    if (user != null) {
+	        HttpSession session = request.getSession();
+	        session.setAttribute("session", user);
+
+	        if (user.getUser_role() == RoleType.JOB_SEEKER) {
+	            response.sendRedirect("jobSeeker.jsp");
+	        } else if (user.getUser_role() == RoleType.RECRUITER) {
+	            response.sendRedirect("Recruiter.jsp");
+	        }
+	    } else {
+	        request.setAttribute("error", "Invalid Email or Password!");
+	        request.getRequestDispatcher("./auth/login.jsp").forward(request, response);
+	    }
+	}
+
 }

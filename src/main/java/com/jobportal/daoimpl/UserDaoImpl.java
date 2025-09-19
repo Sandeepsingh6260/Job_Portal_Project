@@ -2,6 +2,7 @@ package com.jobportal.daoimpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.jobportal.dao.IUserDao;
@@ -12,6 +13,7 @@ import com.jobportal.util.DbConnection;
 public class UserDaoImpl implements IUserDao {
 	private Connection con;
 	private PreparedStatement pst;
+	private String sql = "";
 
 	public UserDaoImpl() {
 		con = DbConnection.getConnection();
@@ -20,7 +22,7 @@ public class UserDaoImpl implements IUserDao {
 	@Override
 	public Boolean Register(User user) {
 		try {
-			String sql = "";
+		
 			if(user.getUser_role() == RoleType.JOB_SEEKER)
 			{
 				System.out.println("seeker");
@@ -59,4 +61,67 @@ public class UserDaoImpl implements IUserDao {
 		}
 		return false;
 	}
+
+	@Override
+	public Boolean isEmailExits(String user_email) {
+		sql="select user_email from users where user_email=?";
+		try {
+			pst=con.prepareStatement(sql);
+			pst.setString(1, user_email);
+			ResultSet rs=pst.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public Boolean getPassword(String user_email, String user_password) {
+	    sql = "SELECT user_password FROM users WHERE user_email = ? AND user_password = ?";
+	    try {
+	        pst = con.prepareStatement(sql);
+	        pst.setString(1, user_email);
+	        pst.setString(2, user_password);
+	        ResultSet rs = pst.executeQuery();
+	        return rs.next();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+
+	
+
+	
+
+	public User login(String email, String password) {
+	    sql = "SELECT * FROM users WHERE user_email = ? AND user_password = ?";
+	    try {
+	        pst = con.prepareStatement(sql);
+	        pst.setString(1, email);
+	        pst.setString(2, password);
+	        ResultSet rs = pst.executeQuery();
+
+	        if (rs.next()) {
+	            User user = new User();
+	            user.setUser_id(rs.getString("user_id"));
+	            user.setUser_name(rs.getString("user_name"));
+	            user.setUser_email(rs.getString("user_email"));
+	            user.setUser_password(rs.getString("user_password"));
+	            user.setLocation(rs.getString("location"));
+	            user.setUser_role(RoleType.valueOf(rs.getString("user_role")));
+	            user.setCompany_id(rs.getString("company_id"));
+	            user.setSkills(rs.getString("skills"));
+	            user.setExperience(rs.getString("experience"));
+	            user.setResumePath(rs.getString("resume_path"));
+	            return user;
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
+	
 }
