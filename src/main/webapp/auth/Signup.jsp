@@ -13,17 +13,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+
     background:
         url("https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1350&q=80")
         no-repeat center/cover;
     font-family: "Segoe UI", sans-serif;
 }
 
-/* frame box */
 .frame {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     width: 350px;
     transition: all 0.4s ease;
     overflow: hidden;
@@ -112,8 +109,6 @@ a.login-link:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
-
-
 
 <form id="registrationForm"
     action="${pageContext.request.contextPath}/AuthenticationServlet"
@@ -223,10 +218,11 @@ a.login-link:hover { text-decoration: underline; }
 
 <script>
 function swapForm() {
-    const role = document.getElementById("user_role").value;
     const frame = document.getElementById("frameBox");
     const recruiterFields = document.getElementById("recruiterFields");
     const jobSeekerButton = document.getElementById("jobSeekerButton");
+
+    const role = document.getElementById("user_role").value;
 
     if (role === "RECRUITER") {
         frame.classList.add("recruiter-active");
@@ -240,5 +236,6 @@ function swapForm() {
 }
 window.onload = swapForm;
 </script>
+
 </body>
 </html>

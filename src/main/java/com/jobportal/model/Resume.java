@@ -1,6 +1,8 @@
 package com.jobportal.model;
 
-public class Resume {
+import com.jobportal.audit.Auditable;
+
+public class Resume extends Auditable {
 	private String resume_id;
 	private String file_path;
 	private String skills;

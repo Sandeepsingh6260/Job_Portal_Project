@@ -1,8 +1,10 @@
 package com.jobportal.model;
 
+import com.jobportal.audit.Auditable;
 import com.jobportal.enums.RoleType;
 
-public class User {
+public class User extends Auditable {
+
     private String user_id;
 	private String user_name;
     private String user_email;
@@ -11,15 +13,16 @@ public class User {
     private String skills;
     private String experience;
     private String resumePath;   
-    private String user_role;
+    private RoleType user_role;
     private String company_id;
     
     public User() {
 		super();
 	}
 
+	// Full constructor
 	public User(String user_id, String user_name, String user_email, String user_password, String location,
-			String skills, String experience, String resumePath, String user_role, String company_id) {
+			String skills, String experience, String resumePath, RoleType user_role, String company_id) {
 		super();
 		this.user_id = user_id;
 		this.user_name = user_name;
@@ -32,6 +35,8 @@ public class User {
 		this.user_role = user_role;
 		this.company_id = company_id;
 	}
+
+	
 
 	public String getUser_id() {
 		return user_id;
@@ -97,11 +102,11 @@ public class User {
 		this.resumePath = resumePath;
 	}
 
-	public String getUser_role() {
+	public RoleType getUser_role() {
 		return user_role;
 	}
 
-	public void setUser_role(String user_role) {
+	public void setUser_role(RoleType user_role) {
 		this.user_role = user_role;
 	}
 
@@ -121,7 +126,5 @@ public class User {
 				+ "]";
 	}
 
-
 	
-    
 }
