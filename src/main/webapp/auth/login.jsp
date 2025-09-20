@@ -140,7 +140,7 @@ button:hover {
 
         <div class="extra-links">
             <a href="#">Forgot Password?</a> |
-            <a href="Signup.jsp">Sign Up</a>
+            <a href="./Signup.jsp">Sign Up</a>
         </div>
     </div>
 </form>

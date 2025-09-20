@@ -1,130 +1,182 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Recruiter Registration</title>
+<title>Job Seeker Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{
+    background:linear-gradient(135deg,#1f1c2c,#928dab);
+    min-height:100vh;
+    color:#fff;
+}
 
-    .container {
-        background: #fff;
-        padding: 30px 40px;
-        border-radius: 12px;
-        box-shadow: 0px 8px 25px rgba(0,0,0,0.2);
-        width: 420px;
-        animation: fadeIn 0.8s ease-in-out;
-    }
+/* HEADER */
+header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:20px 50px;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.05);
+    border-bottom:1px solid rgba(255,255,255,0.2);
+    box-shadow:0 5px 25px rgba(0,0,0,0.5);
+    position:sticky;top:0;z-index:999;
+}
+header h1{
+    font-size:28px;font-weight:700;
+    background:linear-gradient(45deg,#00c6ff,#0072ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+header input{
+    padding:10px 20px;border:none;outline:none;
+    border-radius:30px;
+    background:rgba(255,255,255,0.1);
+    color:#fff;
+    box-shadow:0 0 10px rgba(255,255,255,0.3);
+    transition:0.3s;
+}
+header input:focus{box-shadow:0 0 20px #00c6ff;}
+header a{
+    text-decoration:none;padding:10px 25px;border-radius:30px;
+    background:linear-gradient(90deg,#ff416c,#ff4b2b);
+    color:#fff;font-weight:700;
+    box-shadow:0 0 15px rgba(255,65,108,0.7);
+    transition:0.3s;
+}
+header a:hover{transform:scale(1.1);box-shadow:0 0 25px rgba(255,65,108,1);}
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+/* CONTAINER */
+.container{display:flex;gap:25px;padding:30px;}
 
-    h2 {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #333;
-    }
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    background:rgba(255,255,255,0.08);
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+    backdrop-filter:blur(20px);
+}
+.sidebar h2{font-size:22px;margin-bottom:20px;}
+.sidebar ul{list-style:none;}
+.sidebar ul li{margin:15px 0;}
+.sidebar ul li a{
+    text-decoration:none;color:#fff;
+    display:block;padding:12px 20px;
+    border-radius:12px;
+    transition:0.3s;
+}
+.sidebar ul li a:hover{
+    background:linear-gradient(90deg,#00c6ff,#0072ff);
+    box-shadow:0 0 20px #00c6ff;
+}
 
-    label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        color: #444;
-    }
+/* MAIN */
+.main{flex:1;}
 
-    input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 18px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        outline: none;
-        transition: 0.3s;
-        font-size: 14px;
-    }
+/* CARDS */
+.cards{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:25px;margin-bottom:35px;
+}
+.card{
+    padding:25px;border-radius:20px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.6);
+    transition:0.3s;
+    position:relative;overflow:hidden;
+}
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(0,0,0,0.8);
+}
+.card h3{font-size:18px;margin-bottom:10px;}
+.card p{font-size:32px;font-weight:700;}
 
-    input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 6px rgba(102,126,234,0.6);
-    }
-
-    button {
-        width: 100%;
-        background: #667eea;
-        color: white;
-        padding: 12px;
-        font-size: 16px;
-        font-weight: bold;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    button:hover {
-        background: #764ba2;
-    }
-
-    .error {
-        color: red;
-        font-size: 14px;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-
-    .success {
-        color: green;
-        font-size: 14px;
-        margin-bottom: 15px;
-        text-align: center;
-    }
+/* APPLICATIONS */
+.applications{display:flex;flex-direction:column;gap:20px;}
+.application{
+    padding:20px;border-radius:18px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    display:flex;justify-content:space-between;align-items:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.6);
+    transition:0.3s;
+}
+.application:hover{transform:scale(1.02);box-shadow:0 20px 40px rgba(0,0,0,0.8);}
+.application h4{font-size:18px;font-weight:600;}
+.status{
+    padding:8px 18px;border-radius:30px;
+    font-weight:600;text-transform:uppercase;font-size:13px;
+}
+.pending{background:#facc15;color:#222;}
+.shortlisted{background:#22c55e;color:#fff;}
+.rejected{background:#ef4444;color:#fff;}
 </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Recruiter Registration</h2>
 
-        <!-- Messages -->
-        <p class="error">
-            <%= request.getAttribute("errorMessage") != null ? request.getAttribute("errorMessage") : "" %>
-        </p>
-        <p class="success">
-            <%= request.getAttribute("successMessage") != null ? request.getAttribute("successMessage") : "" %>
-        </p>
+<header>
+    <h1>JobPortal</h1>
+    <input type="text" placeholder="🔍 Search jobs...">
+    <a href="#">Logout</a>
+</header>
 
-        <form action="./RecruiterServlet" method="post">
-            <label for="recruiter_name">Full Name:</label>
-            <input type="text" id="recruiter_name" name="recruiter_name" required>
-
-            <label for="recruiter_email">Email:</label>
-            <input type="email" id="recruiter_email" name="recruiter_email" required>
-
-            <label for="recruiter_password">Password:</label>
-            <input type="password" id="recruiter_password" name="recruiter_password" required>
-
-            <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-
-            <label for="company_name">Company Name:</label>
-            <input type="text" id="company_name" name="company_name" required>
-
-            <label for="location">Location:</label>
-            <input type="text" id="location" name="location" required>
-
-            <button type="submit">Register</button>
-        </form>
+<div class="container">
+    <div class="sidebar">
+        <h2>👋 Hi, Manoj</h2>
+        <ul>
+            <li><a href="#">📄 Profile</a></li>
+            <li><a href="#">📑 My Applications</a></li>
+            <li><a href="#">⭐ Saved Jobs</a></li>
+        </ul>
     </div>
+
+    <div class="main">
+        <div class="cards">
+            <div class="card">
+                <h3>Total Applications</h3>
+                <p>25</p>
+            </div>
+            <div class="card">
+                <h3>Shortlisted</h3>
+                <p>10</p>
+            </div>
+            <div class="card">
+                <h3>Rejected</h3>
+                <p>5</p>
+            </div>
+        </div>
+
+        <h2 style="margin:15px 0;">📌 Recent Applications</h2>
+        <div class="applications">
+            <div class="application">
+                <div>
+                    <h4>Frontend Developer</h4>
+                    <p>ABC Tech, Mumbai</p>
+                </div>
+                <div class="status pending">Pending</div>
+            </div>
+            <div class="application">
+                <div>
+                    <h4>Java Developer</h4>
+                    <p>XYZ Solutions, Delhi</p>
+                </div>
+                <div class="status shortlisted">Shortlisted</div>
+            </div>
+            <div class="application">
+                <div>
+                    <h4>UI/UX Designer</h4>
+                    <p>Creative Minds, Bangalore</p>
+                </div>
+                <div class="status rejected">Rejected</div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
