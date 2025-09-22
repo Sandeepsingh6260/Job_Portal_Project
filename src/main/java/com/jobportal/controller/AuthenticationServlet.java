@@ -58,6 +58,7 @@ public class AuthenticationServlet extends HttpServlet {
         boolean hasError = false;
 
         // ==================== Validation =========================
+        
         if (name == null || name.isBlank()) {
             session.setAttribute("nameError", AppConstant.NAME_REQUIRED);
             hasError = true;
@@ -91,6 +92,7 @@ public class AuthenticationServlet extends HttpServlet {
         }
 
         // Recruiter-specific validation
+        
         if ("recruiter".equalsIgnoreCase(role)) {
             String companyName = request.getParameter("company_name");
             String companyLocation = request.getParameter("company_location");
@@ -106,6 +108,7 @@ public class AuthenticationServlet extends HttpServlet {
         }
 
         // Preserve entered values
+        
         session.setAttribute("user_name_val", name);
         session.setAttribute("user_email_val", email);
         session.setAttribute("location_val", location);
