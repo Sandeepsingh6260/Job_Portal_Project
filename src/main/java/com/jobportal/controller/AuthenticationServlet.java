@@ -44,7 +44,23 @@ public class AuthenticationServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request, response);
+        String action = request.getParameter("action");
+
+        if ("logout".equalsIgnoreCase(action)) {
+            logout(request, response);
+        } else {
+            doPost(request, response);
+        }
     }
+    
+    private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false); // false = don’t create new session
+        if (session != null) {
+            session.invalidate(); // destroy session
+        }
+        response.sendRedirect("auth/login.jsp"); // redirect to login page
+    }
+
 
     private void signup(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();

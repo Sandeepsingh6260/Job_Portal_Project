@@ -26,6 +26,8 @@ public class AppConstant {
     public static final String MOBILE_NOT_VALID = "Mobile number is not valid! Must be 10 digits.";
 
     // =================== Regex Patterns ===================
+    
+    
     public static final String NAME_REGEX = "^[A-Za-z ]{2,50}$";
     public static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     public static final String PASSWORD_REGEX =

@@ -1,249 +1,348 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Job Portal Registration</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-/* ===== Base Style ===== */
 body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background:
-        url("https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1350&q=80")
-        no-repeat center/cover;
-    font-family: "Segoe UI", sans-serif;
-    color: #333;
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background:
+		url("https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1350&q=80")
+		no-repeat center/cover;
+	font-family: "Segoe UI", sans-serif;
 }
 
-
-
 .frame {
-    padding: 0;
-    display: flex;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    background: #ffffff;
+	width: 350px;
+	transition: all 0.4s ease;
+	overflow: hidden;
+	padding: 0;
+	display: flex;
+	border-radius: 12px;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+	background: #ffffff; /* White background for the whole form */
 }
 
 .frame.recruiter-active {
-    width: 850px;
+	width: 850px;
 }
 
 .left, .right {
-    flex: 1;
-    padding: 25px;
-    box-sizing: border-box;
+	flex: 1;
+	padding: 25px;
+	box-sizing: border-box;
 }
 
 .left {
-    background: #ffffff; 
+	background: #ffffff; /* Job Seeker white background */
 }
 
 .right {
-    display: none;
-    background: rgba(255, 255, 255, 0.95);
-    border-left: 1px solid #ddd;
-    border-radius: 0 16px 16px 0;
+	display: none;
+	background: #f9f9f9;
+	border-left: 1px solid #ddd;
 }
 
-h1, h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: 700;
+h1 {
+	text-align: center;
+	margin-bottom: 15px;
+	color: #333;
 }
-h1 { font-size: 28px; color: white; }
-h2 { font-size: 22px; color: #636e72; }
 
+h2 {
+	margin-bottom: 15px;
+	color: #444;
+}
 
 label {
-    display: block;
-    margin-top: 12px;
-    font-weight: 600;
-    font-size: 14px;
+	display: block;
+	margin-top: 8px;
+	font-weight: 600;
+	font-size: 14px;
+	color: #222;
 }
 
 input, select, textarea {
-    width: 100%;
-    padding: 10px 12px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+	width: 100%;
+	padding: 8px 10px;
+	margin-top: 4px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	font-size: 14px;
+	transition: all 0.3s ease;
+	box-sizing: border-box;
 }
 
 input:focus, select:focus, textarea:focus {
-    border-color: #0984e3;
-    box-shadow: 0 0 8px rgba(9, 132, 227, 0.4);
-    outline: none;
+	border-color: #4facfe;
+	box-shadow: 0 0 5px rgba(79, 172, 254, 0.6);
+	outline: none;
 }
 
+.button-group {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	margin-top: 15px;
+	gap: 6px;
+	text-align: center;
+}
 
 button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+	width: 100%;
+	padding: 10px;
+	border: none;
+	border-radius: 6px;
+	color: white;
+	font-size: 15px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
 }
 
-.register-btn { background: linear-gradient(90deg, #0984e3, #00cec9); }
+.register-btn {
+	background: linear-gradient(90deg, #00b894, #00cec9);
+}
 
+.register-btn:hover {
+	background: #019874;
+}
 
 a.login-link {
-    color: #0984e3;
-    text-decoration: none;
-    font-weight: bold;
-}
-a.login-link:hover { text-decoration: underline; }
-
-
-.error { color: #d63031; font-size: 13px; margin-top: 4px; }
-.success { color: #00b894; font-size: 13px; margin-top: 4px; }
-
-
-@media screen and (max-width: 992px) {
-    .frame.recruiter-active {
-        flex-direction: column;
-        width: 95%;
-    }
-    .right {
-        display: block;
-        border-left: none;
-        border-top: 1px solid #ddd;
-        border-radius: 0 0 16px 16px;
-    }
+	color: #0984e3;
+	text-decoration: none;
+	font-weight: bold;
 }
 
-@media screen and (max-width: 480px) {
-    .frame {
-        width: 95%;
-        padding: 15px;
-    }
-    h1 { font-size: 22px; }
+a.login-link:hover {
+	text-decoration: underline;
+}
+
+.error {
+	color: red;
+	font-size: 13px;
+	margin-top: 4px;
+}
+
+.success {
+	color: green;
+	font-size: 13px;
+	margin-top: 4px;
 }
 </style>
 </head>
 <body>
 
-<form id="registrationForm"
-    action="${pageContext.request.contextPath}/AuthenticationServlet"
-    method="post">
+	<form id="registrationForm"
+		action="${pageContext.request.contextPath}/AuthenticationServlet"
+		method="post">
 
-    <div class="frame" id="frameBox">
-        <!-- Left side (Job Seeker) -->
-        <div class="left">
-            <h1>Create an Account</h1>
+		<div class="frame" id="frameBox">
+			<!-- Left side (Job Seeker) -->
+			<div class="left">
+				<h1>Register</h1>
 
-            <% if (session.getAttribute("successMsg") != null) { %>
-                <div class="success"><%= session.getAttribute("successMsg") %></div>
-                <% session.removeAttribute("successMsg"); %>
-            <% } %>
+				<%
+				if (session.getAttribute("successMsg") != null) {
+				%>
+				<div class="success"><%=session.getAttribute("successMsg")%></div>
+				<%
+				session.removeAttribute("successMsg");
+				%>
+				<%
+				}
+				%>
 
-            <% if (session.getAttribute("errorMsg") != null) { %>
-                <div class="error"><%= session.getAttribute("errorMsg") %></div>
-                <% session.removeAttribute("errorMsg"); %>
-            <% } %>
+				<%
+				if (session.getAttribute("errorMsg") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("errorMsg")%></div>
+				<%
+				session.removeAttribute("errorMsg");
+				%>
+				<%
+				}
+				%>
 
-            <label for="user_name">Full Name</label>
-            <input type="text" id="user_name" name="user_name"
-                value="<%= session.getAttribute("user_name_val") != null ? session.getAttribute("user_name_val") : "" %>">
+				<label for="user_name">Name</label> <input type="text"
+					id="user_name" name="user_name"
+					value="<%=session.getAttribute("user_name_val") != null ? session.getAttribute("user_name_val") : ""%>">
+				<%
+				if (session.getAttribute("nameError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("nameError")%></div>
+				<%
+				session.removeAttribute("nameError");
+				%>
+				<%
+				}
+				%>
 
-            <label for="user_email">Email</label>
-            <input type="email" id="user_email" name="user_email"
-                value="<%= session.getAttribute("user_email_val") != null ? session.getAttribute("user_email_val") : "" %>">
+				<label for="user_email">Email</label> <input type="email"
+					id="user_email" name="user_email"
+					value="<%=session.getAttribute("user_email_val") != null ? session.getAttribute("user_email_val") : ""%>">
+				<%
+				if (session.getAttribute("emailError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("emailError")%></div>
+				<%
+				session.removeAttribute("emailError");
+				%>
+				<%
+				}
+				%>
 
-            <label for="user_password">Password</label>
-            <input type="password" id="user_password" name="user_password">
+				<label for="user_password">Password</label> <input type="password"
+					id="user_password" name="user_password">
+				<%
+				if (session.getAttribute("passwordError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("passwordError")%></div>
+				<%
+				session.removeAttribute("passwordError");
+				%>
+				<%
+				}
+				%>
 
-            <label for="confirm_password">Confirm Password</label>
-            <input type="password" id="confirm_password" name="confirm_password">
+				<label for="confirm_password">Confirm Password</label> <input
+					type="password" id="confirm_password" name="confirm_password">
+				<%
+				if (session.getAttribute("confirmPasswordError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("confirmPasswordError")%></div>
+				<%
+				session.removeAttribute("confirmPasswordError");
+				%>
+				<%
+				}
+				%>
 
-            <label for="location">Location</label>
-            <input type="text" id="location" name="location"
-                value="<%= session.getAttribute("location_val") != null ? session.getAttribute("location_val") : "" %>">
+				<label for="location">Location</label> <input type="text"
+					id="location" name="location"
+					value="<%=session.getAttribute("location_val") != null ? session.getAttribute("location_val") : ""%>">
+				<%
+				if (session.getAttribute("locationError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("locationError")%></div>
+				<%
+				session.removeAttribute("locationError");
+				%>
+				<%
+				}
+				%>
 
-            <label for="user_role">Register As</label>
-            <select id="user_role" name="user_role" onchange="swapForm()">
-                <option value="JOB_SEEKER"
-                    <%= "JOB_SEEKER".equals(session.getAttribute("user_role_val")) ? "selected" : "" %>>Job Seeker</option>
-                <option value="RECRUITER"
-                    <%= "RECRUITER".equals(session.getAttribute("user_role_val")) ? "selected" : "" %>>Recruiter</option>
-            </select>
+				<label for="user_role">Role</label> <select id="user_role"
+					name="user_role" onchange="swapForm()">
+					<option value="JOB_SEEKER"
+						<%="JOB_SEEKER".equals(session.getAttribute("user_role_val")) ? "selected" : ""%>>Job
+						Seeker</option>
+					<option value="RECRUITER"
+						<%="RECRUITER".equals(session.getAttribute("user_role_val")) ? "selected" : ""%>>Recruiter</option>
+				</select>
 
-            <button type="submit" name="action" value="signup" class="register-btn">Register</button>
-            <p style="font-size: 14px; margin-top: 8px; text-align:center;">
-                Already have an account? <a href="login.jsp" class="login-link">Login</a>
-            </p>
-        </div>
+				<div id="jobSeekerButton" class="button-group">
+					<button type="submit" name="action" value="signup"
+						class="register-btn">Register</button>
+					<p style="font-size: 13px; color: #555;">
+						Already have an account? <a href="login.jsp" class="login-link">Login</a>
+					</p>
+				</div>
+			</div>
 
-        <!-- Right side (Recruiter) -->
-        
-        <div class="right" id="recruiterFields">
-            <h2>Company Details</h2>
+			<!-- Right side (Recruiter) -->
+			<div class="right" id="recruiterFields">
+				<h2>Recruiter Details</h2>
 
-            <label>Company Name</label>
-            <input type="text" id="company_name" name="company_name">
+				<label>Company Name</label> <input type="text" id="company_name"
+					name="company_name"
+					value="<%=session.getAttribute("company_name_val") != null ? session.getAttribute("company_name_val") : ""%>">
+				<%
+				if (session.getAttribute("companyNameError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("companyNameError")%></div>
+				<%
+				session.removeAttribute("companyNameError");
+				%>
+				<%
+				}
+				%>
 
-            <label>Company Location</label>
-            <input type="text" id="company_location" name="company_location"
-                value="<%= session.getAttribute("company_location_val") != null ? session.getAttribute("company_location_val") : "" %>">
-            <% if (session.getAttribute("companyLocationError") != null) { %>
-                <div class="error"><%= session.getAttribute("companyLocationError") %></div>
-                <% session.removeAttribute("companyLocationError"); %>
-            <% } %>
+				<label>Company Location</label> <input type="text"
+					id="company_location" name="company_location"
+					value="<%=session.getAttribute("company_location_val") != null ? session.getAttribute("company_location_val") : ""%>">
+				<%
+				if (session.getAttribute("companyLocationError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("companyLocationError")%></div>
+				<%
+				session.removeAttribute("companyLocationError");
+				%>
+				<%
+				}
+				%>
 
-            <label>Company Description</label>
-            <textarea id="company_description" name="company_description"><%= session.getAttribute("company_description_val") != null ? session.getAttribute("company_description_val") : "" %></textarea>
+				<label for="mobile">Mobile Number</label> <input type="text"
+					id="mobile" name="mobile"
+					value="<%=session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : ""%>">
+				<%
+				if (session.getAttribute("mobileError") != null) {
+				%>
+				<div class="error"><%=session.getAttribute("mobileError")%></div>
+				<%
+				session.removeAttribute("mobileError");
+				%>
+				<%
+				}
+				%>
 
-            <label for="mobile">Mobile Number</label>
-            <input type="text" id="mobile" name="mobile"
-                value="<%= session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : "" %>">
-            <% if (session.getAttribute("mobileError") != null) { %>
-                <div class="error"><%= session.getAttribute("mobileError") %></div>
-                <% session.removeAttribute("mobileError"); %>
-            <% } %>
 
-            <button type="submit" name="action" value="signup" class="register-btn">Register</button>
-        </div>
-    </div>
-</form>
+				<label>Company Description</label>
+				<textarea id="company_description" name="company_description"><%=session.getAttribute("company_description_val") != null ? session.getAttribute("company_description_val") : ""%></textarea>
 
-<script>
-function swapForm() {
-    const frame = document.getElementById("frameBox");
-    const recruiterFields = document.getElementById("recruiterFields");
-    const role = document.getElementById("user_role").value;
+				<div class="button-group">
+					<button type="submit" name="action" value="signup"
+						class="register-btn">Register</button>
+					<p style="font-size: 13px; color: #555;">
+						Already have an account? <a href="login.jsp" class="login-link">Login</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</form>
 
-    if (role === "RECRUITER") {
-        frame.classList.add("recruiter-active");
-        recruiterFields.style.display = "block";
-    } else {
-        frame.classList.remove("recruiter-active");
-        recruiterFields.style.display = "none";
-    }
-}
-window.onload = swapForm;
-</script>
+	<script>
+		function swapForm() {
+			const frame = document.getElementById("frameBox");
+			const recruiterFields = document.getElementById("recruiterFields");
+			const jobSeekerButton = document.getElementById("jobSeekerButton");
+
+			const role = document.getElementById("user_role").value;
+
+			if (role === "RECRUITER") {
+				frame.classList.add("recruiter-active");
+				recruiterFields.style.display = "block";
+				jobSeekerButton.style.display = "none";
+			} else {
+				frame.classList.remove("recruiter-active");
+				recruiterFields.style.display = "none";
+				jobSeekerButton.style.display = "flex";
+			}
+		}
+		window.onload = swapForm;
+	</script>
 
 </body>
 </html>
