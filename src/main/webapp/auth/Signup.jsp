@@ -16,32 +16,35 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("https://www.webmediatricks.com/uploaded_files/product/1703848338.jpg") no-repeat center/cover;
+    background:
+        url("https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1350&q=80")
+        no-repeat center/cover;
     font-family: "Segoe UI", sans-serif;
     color: #333;
 }
 
-/* ===== Glassmorphism Card ===== */
+
+
 .frame {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(2px);
-    border-radius: 16px;
-    padding: 25px;
-    width: 380px;
-    transition: all 0.5s ease;
-    box-shadow: 0 10px 35px rgb(0 0 0);
-    overflow: hidden;
+    padding: 0;
+    display: flex;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    background: #ffffff;
 }
 
 .frame.recruiter-active {
-    width: 900px;
-    display: flex;
-    padding: 0;
+    width: 850px;
 }
 
 .left, .right {
     flex: 1;
     padding: 25px;
+    box-sizing: border-box;
+}
+
+.left {
+    background: #ffffff; 
 }
 
 .right {
@@ -59,13 +62,12 @@ h1, h2 {
 h1 { font-size: 28px; color: white; }
 h2 { font-size: 22px; color: #636e72; }
 
-/* ===== Form Elements ===== */
+
 label {
     display: block;
     margin-top: 12px;
     font-weight: 600;
     font-size: 14px;
-    /* color:white; */
 }
 
 input, select, textarea {
@@ -85,7 +87,7 @@ input:focus, select:focus, textarea:focus {
     outline: none;
 }
 
-/* ===== Buttons ===== */
+
 button {
     width: 100%;
     padding: 12px;
@@ -106,7 +108,7 @@ button:hover {
 
 .register-btn { background: linear-gradient(90deg, #0984e3, #00cec9); }
 
-/* ===== Links ===== */
+
 a.login-link {
     color: #0984e3;
     text-decoration: none;
@@ -114,11 +116,11 @@ a.login-link {
 }
 a.login-link:hover { text-decoration: underline; }
 
-/* ===== Messages ===== */
+
 .error { color: #d63031; font-size: 13px; margin-top: 4px; }
 .success { color: #00b894; font-size: 13px; margin-top: 4px; }
 
-/* ===== Responsive ===== */
+
 @media screen and (max-width: 992px) {
     .frame.recruiter-active {
         flex-direction: column;
@@ -148,9 +150,9 @@ a.login-link:hover { text-decoration: underline; }
     method="post">
 
     <div class="frame" id="frameBox">
-        <!-- Left Side -->
+        <!-- Left side (Job Seeker) -->
         <div class="left">
-            <h1 >Create an Account</h1>
+            <h1>Create an Account</h1>
 
             <% if (session.getAttribute("successMsg") != null) { %>
                 <div class="success"><%= session.getAttribute("successMsg") %></div>
@@ -194,7 +196,8 @@ a.login-link:hover { text-decoration: underline; }
             </p>
         </div>
 
-        <!-- Right Side (Recruiter Fields) -->
+        <!-- Right side (Recruiter) -->
+        
         <div class="right" id="recruiterFields">
             <h2>Company Details</h2>
 
@@ -202,10 +205,23 @@ a.login-link:hover { text-decoration: underline; }
             <input type="text" id="company_name" name="company_name">
 
             <label>Company Location</label>
-            <input type="text" id="company_location" name="company_location">
+            <input type="text" id="company_location" name="company_location"
+                value="<%= session.getAttribute("company_location_val") != null ? session.getAttribute("company_location_val") : "" %>">
+            <% if (session.getAttribute("companyLocationError") != null) { %>
+                <div class="error"><%= session.getAttribute("companyLocationError") %></div>
+                <% session.removeAttribute("companyLocationError"); %>
+            <% } %>
 
             <label>Company Description</label>
-            <textarea id="company_description" name="company_description" rows="4"></textarea>
+            <textarea id="company_description" name="company_description"><%= session.getAttribute("company_description_val") != null ? session.getAttribute("company_description_val") : "" %></textarea>
+
+            <label for="mobile">Mobile Number</label>
+            <input type="text" id="mobile" name="mobile"
+                value="<%= session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : "" %>">
+            <% if (session.getAttribute("mobileError") != null) { %>
+                <div class="error"><%= session.getAttribute("mobileError") %></div>
+                <% session.removeAttribute("mobileError"); %>
+            <% } %>
 
             <button type="submit" name="action" value="signup" class="register-btn">Register</button>
         </div>

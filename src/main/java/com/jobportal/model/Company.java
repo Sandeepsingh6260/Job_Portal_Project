@@ -7,7 +7,7 @@ public class Company extends Auditable {
 	private String company_name;
 	private String company_description;
 	private String company_location;
-	private String phoneNo;
+	private String mobile;
 
 	public Company() {
 		super();
@@ -15,23 +15,26 @@ public class Company extends Auditable {
 
 	
 	public Company(String company_id, String company_name, String company_description, String company_location,
-			String phoneNo) {
+			String mobile) {
 		super();
 		this.company_id = company_id;
 		this.company_name = company_name;
 		this.company_description = company_description;
 		this.company_location = company_location;
-		this.phoneNo = phoneNo;
+		this.mobile = mobile;
 	}
 
 
-	public String getPhoneNo() {
-		return phoneNo;
+	
+
+
+	public String getMobile() {
+		return mobile;
 	}
 
 
-	public void setPhoneNo(String phoneNo) {
-		this.phoneNo = phoneNo;
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 

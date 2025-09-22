@@ -54,6 +54,7 @@ public class AuthenticationServlet extends HttpServlet {
         String password = request.getParameter("user_password");
         String location = request.getParameter("location");
         String role = request.getParameter("user_role");
+        String mobile = request.getParameter("mobile");
 
         boolean hasError = false;
 
@@ -90,6 +91,14 @@ public class AuthenticationServlet extends HttpServlet {
             session.setAttribute("locationError", AppConstant.LOCATION_NOT_VALID);
             hasError = true;
         }
+        
+        if (mobile == null || mobile.isBlank()) {
+            session.setAttribute("mobileError", AppConstant.MOBILE_REQUIRED);
+            hasError = true;
+        } else if (!AppUtil.isValidMobile(mobile)) {
+            session.setAttribute("mobileError", AppConstant.MOBILE_NOT_VALID);
+            hasError = true;
+        }
 
         // Recruiter-specific validation
         
@@ -116,35 +125,44 @@ public class AuthenticationServlet extends HttpServlet {
         session.setAttribute("company_name_val", request.getParameter("company_name"));
         session.setAttribute("company_location_val", request.getParameter("company_location"));
         session.setAttribute("company_description_val", request.getParameter("company_description"));
+        session.setAttribute("mobile_val", mobile);
 
         if (hasError) {
             response.sendRedirect("auth/Signup.jsp");
             return;
         }
+        RoleType userRole=RoleType.valueOf(role.toUpperCase());
+        String com_id = UUID.randomUUID().toString();
+        Company company = new Company();
+        company.setCompany_id(com_id);
 
-        // Create User object
+        if (userRole == RoleType.RECRUITER){
+            company.setCompany_name(request.getParameter("company_name"));
+            company.setCompany_description(request.getParameter("company_description"));
+            company.setCompany_location(request.getParameter("company_location"));
+            company.setMobile(request.getParameter("mobile"));
+        } else {
+            company.setCompany_name("Individual User");
+            company.setCompany_description("Personal profile");
+            company.setCompany_location(location);
+            company.setMobile(mobile); 
+        }
+        company.setIsDeleted(false);
+        companyService.save(company);
+        
+        // =============== User Object बनाएंगे =================
         User user = new User();
         user.setUser_id(UUID.randomUUID().toString());
         user.setUser_name(name);
         user.setUser_email(email);
         user.setUser_password(password);
         user.setLocation(location);
+        user.setCompany_id(com_id);   
         user.setIsDeleted(false);
-        user.setUser_role(RoleType.valueOf(role.toUpperCase()));
-
-        // If recruiter, save company details
-        if (user.getUser_role() == RoleType.RECRUITER) {
-            Company company = new Company();
-            company.setCompany_id(UUID.randomUUID().toString());
-            company.setCompany_name(request.getParameter("company_name"));
-            company.setCompany_description(request.getParameter("company_description"));
-            company.setCompany_location(request.getParameter("company_location"));
-            company.setIsDeleted(false);
-            companyService.save(company);
-        }
+        user.setUser_role(userRole);
 
         User createdUser = userService.signup(user);
-
+        
         if (createdUser != null) {
             session.setAttribute("successMsg", "Signup successful: " + createdUser.getUser_name());
         } else {
@@ -153,6 +171,8 @@ public class AuthenticationServlet extends HttpServlet {
 
         response.sendRedirect("auth/Signup.jsp");
     }
+        
+        
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();

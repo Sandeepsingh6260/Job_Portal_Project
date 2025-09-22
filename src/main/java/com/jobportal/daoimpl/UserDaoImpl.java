@@ -34,6 +34,7 @@ public class UserDaoImpl implements IUserDao {
                 pst.setString(5, user.getLocation());
                 pst.setString(6, user.getUser_role().name());
             } else if (user.getUser_role() == RoleType.RECRUITER) {
+            	
                 sql = "INSERT INTO users (user_id,user_name,user_email,user_password,location,user_role,company_id) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?)";
                 pst = con.prepareStatement(sql);

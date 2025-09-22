@@ -19,4 +19,8 @@ public class AppUtil {
     public static boolean isValidLocation(String location) {
         return location != null && Pattern.matches(AppConstant.LOCATION_REGEX, location);
     }
+    
+    public static boolean isValidMobile(String mobile) {
+        return mobile != null && Pattern.matches(AppConstant.MOBILE_REGEX, mobile);
+    }
 }

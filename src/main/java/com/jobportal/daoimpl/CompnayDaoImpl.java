@@ -24,15 +24,16 @@ public class CompnayDaoImpl  implements ICompanyDao{
 
 	@Override
 	public Boolean save(Company request) {
-	    sql = "INSERT INTO company (company_id, company_name, company_description, company_location, status) " +
-	                 "VALUES (?, ?, ?, ?, ?)";
+	    sql = "INSERT INTO company (company_id, company_name, company_description, company_location, status, phoneNo) " +
+	                 "VALUES (?, ?, ?, ?, ?, ?)";
 	    try {
 	        pst = con.prepareStatement(sql);
 	        pst.setString(1, request.getCompany_id());
 	        pst.setString(2, request.getCompany_name());
 	        pst.setString(3, request.getCompany_description());
 	        pst.setString(4, request.getCompany_location());
-	        pst.setBoolean(5, true);   
+	        pst.setBoolean(5, true);
+	        pst.setString(6, request.getMobile());
 
 	        int rows = pst.executeUpdate();
 	        return rows > 0;
