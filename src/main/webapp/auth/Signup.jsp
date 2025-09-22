@@ -13,7 +13,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
     background:
         url("https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1350&q=80")
         no-repeat center/cover;
@@ -24,18 +23,25 @@ body {
     width: 350px;
     transition: all 0.4s ease;
     overflow: hidden;
-    padding: 20px;
+    padding: 0;
+    display: flex;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    background: #ffffff; /* White background for the whole form */
 }
 
 .frame.recruiter-active {
     width: 850px;
-    display: flex;
-    padding: 0;
 }
 
 .left, .right {
     flex: 1;
     padding: 25px;
+    box-sizing: border-box;
+}
+
+.left {
+    background: #ffffff; /* Job Seeker white background */
 }
 
 .right {
@@ -115,7 +121,7 @@ a.login-link:hover { text-decoration: underline; }
     method="post">
 
     <div class="frame" id="frameBox">
-        <!-- Left side -->
+        <!-- Left side (Job Seeker) -->
         <div class="left">
             <h1>Register</h1>
 
@@ -183,7 +189,7 @@ a.login-link:hover { text-decoration: underline; }
             </div>
         </div>
 
-        <!-- Right side (Recruiter fields only) -->
+        <!-- Right side (Recruiter) -->
         <div class="right" id="recruiterFields">
             <h2>Recruiter Details</h2>
 
@@ -202,9 +208,20 @@ a.login-link:hover { text-decoration: underline; }
                 <div class="error"><%= session.getAttribute("companyLocationError") %></div>
                 <% session.removeAttribute("companyLocationError"); %>
             <% } %>
+            
+           
+            
 
             <label>Company Description</label>
             <textarea id="company_description" name="company_description"><%= session.getAttribute("company_description_val") != null ? session.getAttribute("company_description_val") : "" %></textarea>
+            
+             <label for="mobile">Mobile Number</label>
+<input type="text" id="mobile" name="mobile"
+    value="<%= session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : "" %>">
+<% if (session.getAttribute("mobileError") != null) { %>
+    <div class="error"><%= session.getAttribute("mobileError") %></div>
+    <% session.removeAttribute("mobileError"); %>
+<% } %>
 
             <div class="button-group">
                 <button type="submit" name="action" value="signup" class="register-btn">Register</button>

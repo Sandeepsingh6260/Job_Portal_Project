@@ -21,6 +21,9 @@ public class AppConstant {
 
     public static final String COMPANY_NAME_REQUIRED = "Company Name is Required!";
     public static final String COMPANY_LOCATION_REQUIRED = "Company Location is Required!";
+    
+    public static final String MOBILE_REQUIRED = "Mobile number is Required!";
+    public static final String MOBILE_NOT_VALID = "Mobile number is not valid! Must be 10 digits.";
 
     // =================== Regex Patterns ===================
     public static final String NAME_REGEX = "^[A-Za-z ]{2,50}$";
@@ -28,4 +31,5 @@ public class AppConstant {
     public static final String PASSWORD_REGEX =
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,20}$";
     public static final String LOCATION_REGEX = "^[A-Za-z0-9 ,.-]{2,100}$";
+    public static final String MOBILE_REGEX = "^[0-9]{10}$";
 }
