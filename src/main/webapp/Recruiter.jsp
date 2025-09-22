@@ -85,7 +85,7 @@
                             <div class="collapse" id="jobs">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="PostJob.jsp">
+                                        <a href="JobPost.jsp">
                                             <span class="sub-item">Post New Job</span>
                                         </a>
                                     </li>

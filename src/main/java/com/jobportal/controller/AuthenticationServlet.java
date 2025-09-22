@@ -200,10 +200,11 @@ public class AuthenticationServlet extends HttpServlet {
         User user = userService.login(email, password);
 
         if (user != null) {
-            session.setAttribute("session", user);
+            session.setAttribute("session", user);  
             if (user.getUser_role() == RoleType.JOB_SEEKER) {
                 response.sendRedirect("jobSeeker.jsp");
-            } else {
+            }
+            else {
                 response.sendRedirect("Recruiter.jsp");
             }
         } else {

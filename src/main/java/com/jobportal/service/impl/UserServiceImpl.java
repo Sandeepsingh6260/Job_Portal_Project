@@ -12,7 +12,7 @@ import com.jobportal.service.IUserService;
 
 public class UserServiceImpl implements IUserService {
     CompnayDaoImpl companyDao ;
-    IUserDao userService;
+    IUserDao userService ;
     
 
     public UserServiceImpl() {
