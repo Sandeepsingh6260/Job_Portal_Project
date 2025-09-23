@@ -2,6 +2,7 @@ package com.jobportal.daoimpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -43,4 +44,28 @@ public class CompnayDaoImpl  implements ICompanyDao{
 	    return false;
 	}
 
-}
+
+	 @Override
+	    public Company getCompanyById(String companyId) {
+	        sql = "SELECT * FROM company WHERE company_id = ?";
+	        Company company = null;
+	        try {
+	            pst = con.prepareStatement(sql);
+	            pst.setString(1, companyId);
+	            ResultSet rs = pst.executeQuery();
+
+	            if (rs.next()) {
+	                company = new Company();
+	                company.setCompany_id(rs.getString("company_id"));
+	                company.setCompany_name(rs.getString("company_name"));
+	                company.setCompany_description(rs.getString("company_description"));
+	                company.setCompany_location(rs.getString("company_location"));
+	                company.setMobile(rs.getString("phoneNo"));
+	                company.setIsDeleted(!rs.getBoolean("status"));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return company;
+	    }
+	}

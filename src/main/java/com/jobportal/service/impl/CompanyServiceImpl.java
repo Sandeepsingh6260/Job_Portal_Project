@@ -18,4 +18,10 @@ public class CompanyServiceImpl implements ICompanyService {
 		return companyDao.save(company);
 	}
 
+	@Override
+	public Company getCompanyById(String company_id) {
+		
+		return companyDao.getCompanyById(company_id);
+	}
+
 }

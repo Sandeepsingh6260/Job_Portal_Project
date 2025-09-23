@@ -217,6 +217,11 @@ public class AuthenticationServlet extends HttpServlet {
 
         if (user != null) {
             session.setAttribute("session", user);
+            
+            Company company = companyService.getCompanyById(user.getCompany_id());
+            System.out.println("company data-------->"+company);
+    
+            session.setAttribute("companySession", company);
             if (user.getUser_role() == RoleType.JOB_SEEKER) {
                 response.sendRedirect("jobSeeker.jsp");
             } else {
