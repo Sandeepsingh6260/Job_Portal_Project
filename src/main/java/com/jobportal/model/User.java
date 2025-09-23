@@ -20,6 +20,7 @@ public class User extends Auditable {
 		super();
 	}
 
+	// Full constructor
 	public User(String user_id, String user_name, String user_email, String user_password, String location,
 			String skills, String experience, String resumePath, RoleType user_role, String company_id) {
 		super();
@@ -34,6 +35,8 @@ public class User extends Auditable {
 		this.user_role = user_role;
 		this.company_id = company_id;
 	}
+
+	
 
 	public String getUser_id() {
 		return user_id;

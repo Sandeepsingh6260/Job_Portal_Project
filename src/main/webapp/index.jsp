@@ -138,6 +138,7 @@
         <h1>Welcome to Job Portal</h1>
         <p>Find your dream job or hire the best talent with ease.</p>
         <a href="./auth/signup.jsp" class="btn">Get Started</a>
+
     </div>
 </section>
 
