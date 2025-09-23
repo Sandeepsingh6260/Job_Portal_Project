@@ -8,9 +8,11 @@ public class Application extends Auditable {
 	private String user_id;
 	private String job_id;
 	private StatusType statusType ;
+	
 	public Application() {
 		super();
 	}
+	
 	public Application(String id, String user_id, String job_id, StatusType statusType) {
 		super();
 		this.id = id;

@@ -6,11 +6,12 @@ public class Auditable {
 	private Timestamp created_at;
 	private Timestamp updated_at;
 	private Boolean status;
-	
 	private  Boolean isDeleted;
+	
 	public Auditable() {
 		super();
 	}
+	
 	
 	public Auditable(Timestamp created_at, Timestamp updated_at, Boolean status, Boolean isDeleted) {
 		super();

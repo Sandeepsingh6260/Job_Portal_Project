@@ -1,9 +1,22 @@
 package com.jobportal.dao;
 
+import java.util.List;
+
 import com.jobportal.model.Job;
 
 public interface IJobDao {
-	
-	public boolean jobpost(Job job);
 
+	boolean jobpost(Job job);
+
+	boolean saveJob(Job job);
+
+	boolean updateJob(Job job);
+
+	boolean deleteJob(String jobId);
+
+	Job getJobById(String jobId);
+
+	List<Job> getAllJobs();
+
+	
 }

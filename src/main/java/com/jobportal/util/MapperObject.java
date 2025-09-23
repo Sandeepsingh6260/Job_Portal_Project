@@ -13,13 +13,8 @@ public class MapperObject {
 		response.setUser_name(user.getUser_name());
 		response.setUser_role(user.getUser_role());
 		response.setIsDeleted(user.getIsDeleted());
-		response.setCompany_id(user.getCompany_id());
-		
-		
-		
-		
-		return null;
-		
+		response.setCompany_id(user.getCompany_id());	
+		return null;		
 	}
 
 }

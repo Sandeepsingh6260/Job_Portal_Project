@@ -1,173 +1,197 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Post a Job</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Job | Recruiter</title>
 <style>
-body {
-	margin: 0;
-	padding: 0;
-	font-family: "Segoe UI", sans-serif;
-	background: #f4f7f9;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	min-height: 100vh;
-}
+    body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f7fb;
+    }
 
-.container {
-	background: #fff;
-	padding: 25px;
-	width: 600px;
-	border-radius: 10px;
-	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-}
 
-h1 {
-	text-align: center;
-	margin-bottom: 20px;
-	font-size: 26px;
-	color: #2d3436;
-}
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+        color: #333;
+    }
+    
 
-label {
-	display: block;
-	margin-top: 12px;
-	font-weight: 600;
-	font-size: 14px;
-}
+    .container {
+        width: 450px;
+        margin: 30px auto;
+        background: #fff;
+        padding: 25px 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    }
 
-input, textarea, select {
-	width: 100%;
-	padding: 10px 12px;
-	margin-top: 6px;
-	border-radius: 6px;
-	border: 1px solid #ccc;
-	font-size: 15px;
-	box-sizing: border-box;
-}
 
-textarea {
-	resize: vertical;
-	min-height: 100px;
-}
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #444;
+    }
 
-button {
-	width: 100%;
-	padding: 12px;
-	margin-top: 20px;
-	border: none;
-	border-radius: 8px;
-	background: linear-gradient(90deg, #0984e3, #00cec9);
-	color: white;
-	font-size: 16px;
-	font-weight: bold;
-	cursor: pointer;
-	transition: 0.2s;
-}
+    input[type="text"], textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        outline: none;
+        font-size: 14px;
+        background: #fafafa;
+        transition: border-color 0.3s ease;
+    }
 
-button:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
+    input[type="text"]:focus, textarea:focus, select:focus {
+        border-color: #007bff;
+        background: #fff;
+    }
 
-.back-btn {
-	background: #636e72;
-	margin-top: 10px;
-}
+    textarea {
+        resize: none;
+        height: 80px;
+    }
 
-.back-btn:hover {
-	background: #2d3436;
-}
+    .error {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: -8px;
+        margin-bottom: 10px;
+    }
 
-.error {
-	color: #d63031;
-	font-size: 13px;
-	margin-top: 5px;
-}
+    .success {
+        color: #2ecc71;
+        font-size: 14px;
+        margin-bottom: 12px;
+        text-align: center;
+        font-weight: bold;
+    }
 
-.success {
-	color: #00b894;
-	font-size: 13px;
-	margin-top: 5px;
-}
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .back-link a {
+        text-decoration: none;
+        color: #007bff;
+        font-size: 14px;
+    }
+
+    .back-link a:hover {
+        text-decoration: underline;
+    }
 </style>
 </head>
 <body>
+    <h2>Post a Job</h2>
 
-	<div class="container">
-		<h1>Post a New Job</h1>
+    <div class="container">
+        <!-- Success & Error messages -->
+        <%
+            if (session.getAttribute("successMsg") != null) {
+        %>
+            <div class="success"><%= session.getAttribute("successMsg") %></div>
+        <%
+                session.removeAttribute("successMsg");
+            }
+            if (session.getAttribute("errorMsg") != null) {
+        %>
+            <div class="error"><%= session.getAttribute("errorMsg") %></div>
+        <%
+                session.removeAttribute("errorMsg");
+            }
+        %>
 
-		<!-- Success / Error messages -->
-		<%
-		if (session.getAttribute("successMsg") != null) {
-		%>
-		<div class="success"><%=session.getAttribute("successMsg")%></div>
-		<!-- ✅ Back button visible only when job is posted successfully -->
-		<form action="recruiter.jsp" method="get">
-			<button type="submit" class="back-btn">Back to Dashboard</button>
-		</form>
-		<%
-		session.removeAttribute("successMsg");
-		%>
-		<%
-		}
-		%>
+        <form action="./RecruiterServlet" method="post">
+            <input type="hidden" name="action" value="jobpost" />
 
-		<%
-		if (session.getAttribute("errorMsg") != null) {
-		%>
-		<div class="error"><%=session.getAttribute("errorMsg")%></div>
-		<%
-		session.removeAttribute("errorMsg");
-		%>
-		<%
-		}
-		%>
+            <!-- Job Title -->
+            <label>Job Title:</label>
+            <input type="text" name="title" 
+                   value="<%= session.getAttribute("title_val") != null ? session.getAttribute("title_val") : "" %>"/>
+            <div class="error"><%= session.getAttribute("titleError") != null ? session.getAttribute("titleError") : "" %></div>
 
-		<form action="${pageContext.request.contextPath}/RecruitersServlet"
-			method="post">
-			<input type="hidden" name="action" value="postJob"> <label
-				for="title">Job Title</label> <input type="text" id="title"
-				name="title"
-				value="<%=session.getAttribute("title_val") != null ? session.getAttribute("title_val") : ""%>">
+            <!-- Description -->
+            <label>Description:</label>
+            <textarea name="description"><%= session.getAttribute("desc_val") != null ? session.getAttribute("desc_val") : "" %></textarea>
+            <div class="error"><%= session.getAttribute("descriptionError") != null ? session.getAttribute("descriptionError") : "" %></div>
 
-			<label for="description">Description</label>
-			<textarea id="description" name="description"><%=session.getAttribute("desc_val") != null ? session.getAttribute("desc_val") : ""%></textarea>
+            <!-- Location -->
+            <label>Location:</label>
+            <input type="text" name="location" 
+                   value="<%= session.getAttribute("loc_val") != null ? session.getAttribute("loc_val") : "" %>"/>
+            <div class="error"><%= session.getAttribute("locationError") != null ? session.getAttribute("locationError") : "" %></div>
 
-			<label for="location">Location</label> <input type="text"
-				id="location" name="location"
-				value="<%=session.getAttribute("loc_val") != null ? session.getAttribute("loc_val") : ""%>">
+            <!-- Salary -->
+            <label>Salary:</label>
+            <input type="text" name="salary" 
+                   value="<%= session.getAttribute("salary_val") != null ? session.getAttribute("salary_val") : "" %>"/>
+            <div class="error"><%= session.getAttribute("salaryError") != null ? session.getAttribute("salaryError") : "" %></div>
 
-			<label for="salary">Salary (in ₹)</label> <input type="number"
-				step="0.01" id="salary" name="salary"
-				value="<%=session.getAttribute("salary_val") != null ? session.getAttribute("salary_val") : ""%>">
+            <!-- Experience -->
+            <label>Experience:</label>
+            <input type="text" name="experience_required" 
+                   value="<%= session.getAttribute("exp_val") != null ? session.getAttribute("exp_val") : "" %>"/>
+            <div class="error"><%= session.getAttribute("experienceError") != null ? session.getAttribute("experienceError") : "" %></div>
 
-			<label for="experience_required">Experience Required (years)</label>
-			<input type="number" id="experience_required"
-				name="experience_required" min="0"
-				value="<%=session.getAttribute("exp_val") != null ? session.getAttribute("exp_val") : ""%>">
+            <!-- Job Type -->
+            <label>Job Type:</label>
+            <select name="job_type">
+                <option value="">--Select--</option>
+                <option value="Full-Time" <%= "Full-Time".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Full-Time</option>
+                <option value="Part-Time" <%= "Part-Time".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Part-Time</option>
+                <option value="Internship" <%= "Internship".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Internship</option>
+                <option value="Contract" <%= "Contract".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Contract</option>
+            </select>
+            <div class="error"><%= session.getAttribute("jobTypeError") != null ? session.getAttribute("jobTypeError") : "" %></div>
 
-			<label for="job_type">Job Type</label> <select id="job_type"
-				name="job_type">
-				<option value="1"
-					<%="1".equals(String.valueOf(session.getAttribute("job_type_val"))) ? "selected" : ""%>>Full-Time</option>
-				<option value="2"
-					<%="2".equals(String.valueOf(session.getAttribute("job_type_val"))) ? "selected" : ""%>>Part-Time</option>
-				<option value="3"
-					<%="3".equals(String.valueOf(session.getAttribute("job_type_val"))) ? "selected" : ""%>>Internship</option>
-				<option value="4"
-					<%="4".equals(String.valueOf(session.getAttribute("job_type_val"))) ? "selected" : ""%>>Contract</option>
-			</select> <label for="mobile_no">Mobile Number</label> <input type="text"
-				id="mobile_no" name="mobile_no"
-				value="<%=session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : ""%>">
+            <!-- Mobile -->
+            <label>Mobile:</label>
+            <input type="text" name="mobile_no" 
+                   value="<%= session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : "" %>"/>
+            <div class="error"><%= session.getAttribute("mobileError") != null ? session.getAttribute("mobileError") : "" %></div>
 
-			<button type="submit">Post Job</button>
-		</form>
-	</div>
+            <button type="submit">Post Job</button>
+        </form>
 
+        <div class="back-link">
+            <a href="Recruiter.jsp">← Back to Dashboard</a>
+        </div>
+    </div>
+
+<%
+    // remove field-specific errors after displaying (to avoid showing again on refresh)
+    session.removeAttribute("titleError");
+    session.removeAttribute("descriptionError");
+    session.removeAttribute("locationError");
+    session.removeAttribute("salaryError");
+    session.removeAttribute("experienceError");
+    session.removeAttribute("jobTypeError");
+    session.removeAttribute("mobileError");
+%>
 </body>
 </html>

@@ -9,10 +9,7 @@ public class User extends Auditable {
 	private String user_name;
     private String user_email;
     private String user_password;
-    private String location;
-    private String skills;
-    private String experience;
-    private String resumePath;   
+    private String location;  
     private RoleType user_role;
     private String company_id;
     
@@ -22,16 +19,13 @@ public class User extends Auditable {
 
 	// Full constructor
 	public User(String user_id, String user_name, String user_email, String user_password, String location,
-			String skills, String experience, String resumePath, RoleType user_role, String company_id) {
+			 RoleType user_role, String company_id) {
 		super();
 		this.user_id = user_id;
 		this.user_name = user_name;
 		this.user_email = user_email;
 		this.user_password = user_password;
 		this.location = location;
-		this.skills = skills;
-		this.experience = experience;
-		this.resumePath = resumePath;
 		this.user_role = user_role;
 		this.company_id = company_id;
 	}
@@ -78,29 +72,7 @@ public class User extends Auditable {
 		this.location = location;
 	}
 
-	public String getSkills() {
-		return skills;
-	}
-
-	public void setSkills(String skills) {
-		this.skills = skills;
-	}
-
-	public String getExperience() {
-		return experience;
-	}
-
-	public void setExperience(String experience) {
-		this.experience = experience;
-	}
-
-	public String getResumePath() {
-		return resumePath;
-	}
-
-	public void setResumePath(String resumePath) {
-		this.resumePath = resumePath;
-	}
+	
 
 	public RoleType getUser_role() {
 		return user_role;
@@ -121,10 +93,10 @@ public class User extends Auditable {
 	@Override
 	public String toString() {
 		return "User [user_id=" + user_id + ", user_name=" + user_name + ", user_email=" + user_email
-				+ ", user_password=" + user_password + ", location=" + location + ", skills=" + skills + ", experience="
-				+ experience + ", resumePath=" + resumePath + ", user_role=" + user_role + ", company_id=" + company_id
-				+ "]";
+				+ ", user_password=" + user_password + ", location=" + location + ", user_role=" + user_role
+				+ ", company_id=" + company_id + "]";
 	}
 
+	
 	
 }

@@ -218,13 +218,18 @@ public class AuthenticationServlet extends HttpServlet {
 
         if (user != null) {
             session.setAttribute("session", user);  
+            session.setAttribute("user_id", user.getUser_id()); 
             if (user.getUser_role() == RoleType.JOB_SEEKER) {
                 response.sendRedirect("jobSeeker.jsp");
             }
             else {
+            	 session.setAttribute("session", user); 
+            	 session.setAttribute("user_id", user.getUser_id()); 
+            	 System.out.println(user);
                 response.sendRedirect("Recruiter.jsp");
             }
-        } else {
+        } 
+        else {
             session.setAttribute("loginError", "Invalid Email or Password!");
             response.sendRedirect("auth/login.jsp");
         }
