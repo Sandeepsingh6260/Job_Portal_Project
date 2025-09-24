@@ -5,11 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 import com.jobportal.dao.ICompanyDao;
 import com.jobportal.model.Company;
-
-
 import com.jobportal.util.DbConnection;
 
 public class CompnayDaoImpl  implements ICompanyDao{
@@ -67,5 +64,25 @@ public class CompnayDaoImpl  implements ICompanyDao{
 	            e.printStackTrace();
 	        }
 	        return company;
+	    }
+
+
+	 @Override
+	    public boolean UpdateCompany(Company company) {
+	        String sql = "UPDATE company SET company_name=?, company_description=?, company_location=?, phoneNo=? WHERE company_id=?";
+	        try {
+	            PreparedStatement pst = con.prepareStatement(sql);
+	            pst.setString(1, company.getCompany_name());
+	            pst.setString(2, company.getCompany_description());
+	            pst.setString(3, company.getCompany_location());
+	            pst.setString(4, company.getMobile());
+	            pst.setString(5, company.getCompany_id());
+
+	            int rows = pst.executeUpdate();
+	            return rows > 0;  // agar record update hua to true
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return false;
+	        }
 	    }
 	}

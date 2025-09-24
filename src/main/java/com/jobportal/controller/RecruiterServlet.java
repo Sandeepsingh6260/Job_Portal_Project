@@ -3,8 +3,6 @@ package com.jobportal.controller;
 import java.io.IOException;
 import java.util.UUID;
 
-
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

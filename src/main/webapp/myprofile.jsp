@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="com.jobportal.model.User"%>
-<%@ page import = "com.jobportal.model.Company"%>
+<%@ page import="com.jobportal.model.Company"%>
 <%
 User user = (User) session.getAttribute("session");
 if (user == null) {
@@ -10,8 +10,8 @@ if (user == null) {
 }
 %>
 <%
-Company company =(Company) session.getAttribute("companySession");
-if(company==null){
+Company company = (Company) session.getAttribute("companySession");
+if (company == null) {
 	response.sendRedirect("auth/login.jsp");
 	return;
 }
@@ -59,7 +59,8 @@ body {
 .profile-container {
 	margin-top: -1200px; /* ऊपर से थोड़ी दूरी, कम या ज्यादा कर सकते हैं */
 }
-.edit-form-container{
+
+.edit-form-container {
 	margin-top: -700px;
 }
 
@@ -276,7 +277,7 @@ body {
 
 /* Company Description Styling */
 .company-description {
-	grid-column: 1 / -1; /* Span across both columns */
+	grid-column: 1/-1; /* Span across both columns */
 	background: var(--light);
 	padding: 20px;
 	border-radius: 10px;
@@ -309,17 +310,17 @@ body {
 	position: relative;
 }
 
-@keyframes fadeIn {
-	from { 
-		opacity: 0;
-		transform: translateY(20px);
-	}
-	to { 
-		opacity: 1;
-		transform: translateY(0);
-	}
+@
+keyframes fadeIn {from { opacity:0;
+	transform: translateY(20px);
 }
 
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+}
 .form-header {
 	background: linear-gradient(145deg, var(--primary), var(--secondary));
 	color: white;
@@ -433,12 +434,12 @@ body {
 
 /* Full width form group */
 .form-group-full {
-	grid-column: 1 / -1;
+	grid-column: 1/-1;
 }
 
 /* Password section styling */
 .password-section {
-	grid-column: 1 / -1;
+	grid-column: 1/-1;
 	border-top: 2px solid var(--light);
 	padding-top: 20px;
 	margin-top: 10px;
@@ -474,6 +475,12 @@ body {
 	font-weight: 500;
 	cursor: pointer;
 	transition: var(--transition);
+}
+
+.error-msg {
+	color: red;
+	font-size: 12px;
+	margin-top: 5px;
 }
 
 .btn-primary {
@@ -533,15 +540,39 @@ body {
 	font-weight: 500;
 	cursor: pointer;
 	transition: var(--transition);
+} 
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
 }
+
 
 .reopen-profile-btn:hover {
 	transform: translateY(-2px);
 	box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
 }
 
+.simple-email {
+	padding: 12px 15px;
+	font-size: 14px;
+	color: var(--dark);
+	background-color: #f8f9fa;
+	border-radius: 8px;
+	border: 1px solid #e0e0e0;
+}
+
+.email-display {
+	padding: 12px 15px;
+	font-size: 14px;
+	color: var(--dark);
+	background-color: #f8f9fa;
+	border-radius: 8px;
+	border: 1px solid #e0e0e0;
+	font-weight: 500;
+}
 /* Responsive */
-@media (max-width: 992px) {
+@media ( max-width : 992px) {
 	.main-content {
 		margin-left: 0;
 		padding: 20px;
@@ -554,7 +585,7 @@ body {
 	}
 }
 
-@media (max-width: 768px) {
+@media ( max-width : 768px) {
 	.profile-container {
 		flex-direction: column;
 	}
@@ -581,6 +612,21 @@ body {
 </style>
 
 <script>
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    <% if (session.getAttribute("editFormOpen") != null) { %>
+        document.getElementById('profileContainer').style.display = 'none';
+        document.getElementById('editFormContainer').style.display = 'block';
+        <% session.removeAttribute("editFormOpen"); %>
+    <% } %>
+});
+
+	
+
+
+
+
 function showEditForm() {
     document.getElementById('profileContainer').style.display = 'none';
     document.getElementById('editFormContainer').style.display = 'block';
@@ -703,7 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		<div class="main-content">
 			<!-- Profile Closed State (Initially Hidden) -->
-			
+
 
 			<!-- Profile Container -->
 			<div class="profile-container" id="profileContainer">
@@ -774,7 +820,7 @@ document.addEventListener('DOMContentLoaded', function() {
 							<div class="info-label">Phone</div>
 							<div class="info-value"><%=company.getMobile()%></div>
 						</div>
-						
+
 						<!-- Company Description Section -->
 						<div class="company-description">
 							<div class="info-label">Company Description</div>
@@ -789,7 +835,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			<!-- Edit Form Container -->
 			<form class="edit-form-container" id="editFormContainer"
-				action="UpdateProfileServlet" method="post" onsubmit="return validateForm()">
+				action="${pageContext.request.contextPath}/AuthenticationServlet"
+				method="post" onsubmit="return validateForm()">
 				<div class="form-header">
 					<h3 class="form-title">Edit Profile</h3>
 					<button type="button" class="close-form" onclick="cancelEdit()">&times;</button>
@@ -798,49 +845,57 @@ document.addEventListener('DOMContentLoaded', function() {
 				<div class="form-body">
 					<div class="form-grid">
 						<div class="form-group">
-							<label class="form-label">Full Name</label> 
-							<input type="text" class="form-input" name="user_name" value="<%=user.getUser_name()%>" required>
+							<label class="form-label">Full Name</label> <input type="text"
+								class="form-input" name="user_name"
+								value="<%=user.getUser_name()%>" required>
 						</div>
 
 						<div class="form-group">
-							<label class="form-label">Email</label> 
-							<div class=""><%=user.getUser_email()%></div>
-							<%-- <input type="email" class="form-input" name="user_email" value="<%=user.getUser_email()%>" readonly> --%>
+							<label class="form-label">Email</label> <input type="hidden"
+								name="email" />
+							<div class="email-display">
+								<%=user.getUser_email()%>
+							</div>
+
 						</div>
 
 						<div class="form-group">
-							<label class="form-label">Location</label> 
-							<input type="text" class="form-input" name="location" value="<%=user.getLocation()%>" required>
+							<label class="form-label">Location</label> <input type="text"
+								class="form-input" name="location"
+								value="<%=user.getLocation()%>" required>
 						</div>
 
 						<%
 						if (user.getUser_role() == com.jobportal.enums.RoleType.RECRUITER && company != null) {
 						%>
 						<div class="form-group">
-							<label class="form-label">Company Name</label> 
-							<input type="text" class="form-input" name="company_name" value="<%=company.getCompany_name()%>">
+							<label class="form-label">Company Name</label> <input type="text"
+								class="form-input" name="company_name"
+								value="<%=company.getCompany_name()%>">
 						</div>
 
 						<div class="form-group">
-							<label class="form-label">Company Location</label> 
-							<input type="text" class="form-input" name="company_location" value="<%=company.getCompany_location()%>">
+							<label class="form-label">Company Location</label> <input
+								type="text" class="form-input" name="company_location"
+								value="<%=company.getCompany_location()%>">
 						</div>
 
 						<div class="form-group">
-							<label class="form-label">Phone</label> 
-							<input type="text" class="form-input" name="phoneNo" value="<%=company.getMobile()%>">
+							<label class="form-label">Phone</label> <input type="text"
+								class="form-input" name="phoneNo"
+								value="<%=company.getMobile()%>">
 						</div>
-						
+
 						<!-- Company Description Textarea -->
 						<div class="form-group form-group-full">
-							<label class="form-label">Company Description</label> 
-							<textarea class="form-textarea" name="company_description" 
+							<label class="form-label">Company Description</label>
+							<textarea class="form-textarea" name="company_description"
 								placeholder="Enter company description"><%=company.getCompany_description() != null ? company.getCompany_description() : ""%></textarea>
 						</div>
 						<%
 						}
 						%>
-						
+
 						<!-- Password Change Section -->
 						<div class="password-section">
 							<div class="password-section-title">Change Password</div>
@@ -848,38 +903,78 @@ document.addEventListener('DOMContentLoaded', function() {
 								<div class="form-group">
 									<label class="form-label">Current Password</label>
 									<div class="password-field">
-										<input type="password" class="form-input" id="oldPassword" name="old_password" 
-											placeholder="Enter current password">
-										<button type="button" class="password-toggle" onclick="togglePassword('oldPassword', this)">👁️</button>
+										<input type="password" class="form-input" id="oldPassword"
+											name="old_password" placeholder="Enter current password">
+										<button type="button" class="password-toggle"
+											onclick="togglePassword('oldPassword', this)">👁️</button>
 									</div>
-									<div class="password-note">Leave blank if you don't want to change password</div>
+									<%
+									if (session.getAttribute("passwordInvalidError") != null) {
+									%>
+									<div class="error"><%=session.getAttribute("passwordInvalidError")%></div>
+									<%
+									session.removeAttribute("passwordInvalidError");
+									}
+									%>
+									<div class="password-note">Leave blank if you don't want
+										to change password</div>
 								</div>
-								
+
 								<div class="form-group">
 									<label class="form-label">New Password</label>
 									<div class="password-field">
-										<input type="password" class="form-input" id="newPassword" name="new_password" 
-											placeholder="Enter new password">
-										<button type="button" class="password-toggle" onclick="togglePassword('newPassword', this)">👁️</button>
+										<input type="password" class="form-input" id="newPassword"
+											name="new_password" placeholder="Enter new password">
+										<button type="button" class="password-toggle"
+											onclick="togglePassword('newPassword', this)">👁️</button>
 									</div>
+									<!-- New Password Error -->
+									<%
+									if (session.getAttribute("passwordInvalidError1") != null) {
+									%>
+									<div class="error"><%=session.getAttribute("passwordInvalidError1")%></div>
+									<%
+									session.removeAttribute("passwordInvalidError1");
+									}
+									%>
+
+
 								</div>
-								
+
 								<div class="form-group">
 									<label class="form-label">Confirm New Password</label>
 									<div class="password-field">
-										<input type="password" class="form-input" id="confirmPassword" name="confirm_password" 
-											placeholder="Confirm new password" onkeyup="validatePassword()">
-										<button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)">👁️</button>
+										<input type="password" class="form-input" id="confirmPassword"
+											name="confirm_password" placeholder="Confirm new password"
+											onkeyup="validatePassword()">
+										<button type="button" class="password-toggle"
+											onclick="togglePassword('confirmPassword', this)">👁️</button>
 									</div>
-									<div id="passwordError" style="color: var(--accent); font-size: 12px; margin-top: 5px;"></div>
+									<!-- Confirm Password Error -->
+									<%
+									if (session.getAttribute("passwordError") != null) {
+									%>
+									<div class="error"><%=session.getAttribute("passwordError")%></div>
+									<%
+									session.removeAttribute("passwordError");
+									}
+									%>
+
 								</div>
+
+
+
+
+
 							</div>
 						</div>
 					</div>
 
 					<div class="form-actions">
-						<button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
-						<button type="submit" class="btn btn-primary">Save Changes</button>
+						<button type="button" class="btn btn-secondary"
+							onclick="cancelEdit()">Cancel</button>
+						<button type="submit" class="btn btn-primary" name="action"
+							value="update">Save Changes</button>
 					</div>
 				</div>
 			</form>
@@ -888,5 +983,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		<jsp:include page="./include/footer.jsp" />
 	</div>
 	<jsp:include page="./include/scripts.jsp"></jsp:include>
+	
+	
 </body>
 </html>

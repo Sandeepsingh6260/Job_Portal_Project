@@ -1,14 +1,14 @@
 package com.jobportal.controller;
 
+import java.io.IOException;
+import java.util.UUID;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-
-import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Servlet implementation class UserServlet

@@ -1,53 +1,56 @@
 package com.jobportal.service.impl;
 
-
-
 import com.jobportal.dao.IUserDao;
 import com.jobportal.daoimpl.CompnayDaoImpl;
 import com.jobportal.daoimpl.UserDaoImpl;
-
+import com.jobportal.enums.RoleType;
+import com.jobportal.model.Company;
 import com.jobportal.model.User;
-
 import com.jobportal.service.IUserService;
 
 public class UserServiceImpl implements IUserService {
-    CompnayDaoImpl companyDao ;
-    IUserDao userService;
-    
+    private CompnayDaoImpl companyDao;
+    private IUserDao userService;
 
     public UserServiceImpl() {
-		super();
-		userService=new UserDaoImpl();
-		companyDao= new CompnayDaoImpl();
-	}
+        super();
+        userService = new UserDaoImpl();
+        companyDao = new CompnayDaoImpl();
+    }
 
-
-	@Override
+    @Override
     public User signup(User request) {
-    	System.out.println("Signup Service    "+request);
+        System.out.println("Signup Service    " + request);
         try {
-   
             boolean userRegistered = userService.Register(request);
-            System.out.println("User registered? " + userRegistered);  
+            System.out.println("User registered? " + userRegistered);
 
-            if(userRegistered){ 
-                return request; 
+            if (userRegistered) {
+                return request;
             } else {
                 System.out.println("User insert failed!");
             }
 
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
-	
-	
-	@Override
-	public User login(String email, String password) {
-	    return userService.login(email, password);  
-	}
 
+    @Override
+    public User login(String email) {
+        return userService.login(email);
+    }
 
+    @Override
+    public boolean UpdateUserAndCompany(User user, Company company) {
+        boolean userUpdated = userService.UpdateUser(user);   // ✅ fixed
+        boolean companyUpdated = true;
+
+        if (user.getUser_role() == RoleType.RECRUITER && company != null) {
+            companyUpdated = companyDao.UpdateCompany(company);
+        }
+
+        return userUpdated && companyUpdated;
+    }
 }

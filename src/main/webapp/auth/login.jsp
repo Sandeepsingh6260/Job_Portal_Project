@@ -111,36 +111,51 @@ button:hover {
     <div class="frame">
         <h1>Login</h1>
 
-        <!-- Hidden dummy fields to prevent autofill -->
+        <!-- Hidden dummy fields to prevent browser autofill -->
         <input type="text" style="display:none">
         <input type="password" style="display:none">
 
         <!-- Email -->
         <label for="user_email">Email</label>
-        <input type="email" id="user_email" name="user_email" 
-               placeholder="Enter your email" 
-               value="<%= request.getAttribute("user_email_val") != null ? request.getAttribute("user_email_val") : "" %>">
+        <input type="email" id="user_email" name="user_email" placeholder="Enter your email"
+               value="<%= session.getAttribute("user_email_val") != null ? session.getAttribute("user_email_val") : "" %>">
         <div class="error">
-            <%= request.getAttribute("emailError") != null ? request.getAttribute("emailError") : "" %>
+            <%= session.getAttribute("emailError") != null ? session.getAttribute("emailError") : "" %>
         </div>
+        <%
+            session.removeAttribute("emailError");
+        %>
 
         <!-- Password -->
         <label for="user_password">Password</label>
         <input type="password" id="user_password" name="user_password" placeholder="Enter your password">
         <div class="error">
-            <%= request.getAttribute("passwordError") != null ? request.getAttribute("passwordError") : "" %>
+            <%= session.getAttribute("passwordError") != null ? session.getAttribute("passwordError") : "" %>
         </div>
+        <%
+            session.removeAttribute("passwordError");
+        %>
 
         <!-- Invalid login -->
         <div class="error">
-            <%= request.getAttribute("loginError") != null ? request.getAttribute("loginError") : "" %>
+            <%= session.getAttribute("loginError") != null ? session.getAttribute("loginError") : "" %>
         </div>
+        <%
+            session.removeAttribute("loginError");
+        %>
+
+        <!-- Invalid password -->
+        <div class="error">
+            <%= session.getAttribute("passwordInvalidError") != null ? session.getAttribute("passwordInvalidError") : "" %>
+        </div>
+        <%
+            session.removeAttribute("passwordInvalidError");
+        %>
 
         <button type="submit" name="action" value="login">Login</button>
 
         <div class="extra-links">
-            <a href="#">Forgot Password?</a> |
-            <a href="./Signup.jsp">Sign Up</a>
+            <a href="#">Forgot Password?</a> | <a href="./Signup.jsp">Sign Up</a>
         </div>
     </div>
 </form>

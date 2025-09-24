@@ -34,4 +34,6 @@ public class AppConstant {
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,20}$";
     public static final String LOCATION_REGEX = "^[A-Za-z0-9 ,.-]{2,100}$";
     public static final String MOBILE_REGEX = "^[0-9]{10}$";
+	public static final String INVALID_PASSWORD = "Invalid Password!";
+	
 }
