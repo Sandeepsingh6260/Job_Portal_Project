@@ -5,9 +5,7 @@ package com.jobportal.service.impl;
 import com.jobportal.dao.IUserDao;
 import com.jobportal.daoimpl.CompnayDaoImpl;
 import com.jobportal.daoimpl.UserDaoImpl;
-
 import com.jobportal.model.User;
-
 import com.jobportal.service.IUserService;
 
 public class UserServiceImpl implements IUserService {

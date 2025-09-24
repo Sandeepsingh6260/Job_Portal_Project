@@ -4,11 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
 import com.jobportal.dao.ICompanyDao;
 import com.jobportal.model.Company;
-
-
 import com.jobportal.util.DbConnection;
 
 public class CompnayDaoImpl  implements ICompanyDao{
