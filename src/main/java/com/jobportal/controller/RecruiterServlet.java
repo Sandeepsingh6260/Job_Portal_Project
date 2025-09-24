@@ -30,127 +30,116 @@ public class RecruiterServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("RecruiterServlet doGet method called");
-        String action = request.getParameter("action");
-        HttpSession session = request.getSession();
-
-        try {
-            if ("edit".equalsIgnoreCase(action)) {
-                String jobId = request.getParameter("job_id");
-                System.out.println("Edit action for job ID: " + jobId);
-                
-                Job job = jobService.getJobById(jobId);
-                System.out.println("Job found for edit: " + (job != null ? job.getTitle() : "null"));
-                
-                request.setAttribute("updateJob", job);
-            } 
-            
-            else if ("delete".equalsIgnoreCase(action)) {
-                String jobId = request.getParameter("job_id");
-                System.out.println("Delete action for job ID: " + jobId);
-                boolean deleted = jobService.deleteJob(jobId);
-                if (deleted) {
-                    session.setAttribute("successMsg", "Job deleted successfully!");
-                } else {
-                    session.setAttribute("errorMsg", "Failed to delete job!");
-                }
-            }
-
-            // Pagination manageJob
-            int currentPage = 1;
-            int recordsPerPage = 5;
-            if(request.getParameter("page") != null) {
-                currentPage = Integer.parseInt(request.getParameter("page"));
-            }
-
-            List<Job> allJobs = jobService.getAllJobs();
-            System.out.println("Total jobs retrieved from service: " + (allJobs != null ? allJobs.size() : "null"));
-
-            int startIndex = (currentPage - 1) * recordsPerPage;
-            int endIndex = Math.min(startIndex + recordsPerPage, allJobs.size());
-            int totalPages = (int) Math.ceil(allJobs.size() * 1.0 / recordsPerPage);
-
-            List<Job> jobsPage = allJobs.subList(startIndex, endIndex);
-            System.out.println("Jobs for page " + currentPage + ": " + jobsPage.size() + " items");
-
-            request.setAttribute("jobs", jobsPage);
-            request.setAttribute("currentPage", currentPage);
-            request.setAttribute("totalPages", totalPages);
-
-            request.getRequestDispatcher("manageJobs.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            session.setAttribute("errorMsg", "Something went wrong: " + e.getMessage());
-            response.sendRedirect("manageJobs.jsp");
-        }
+        handleRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("RecruiterServlet doPost method called");
+        handleRequest(request, response);
+    }
 
+    private void handleRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         String action = request.getParameter("action");
-        HttpSession session = request.getSession();
+        System.out.println("Action received: " + action);
 
-        try {
-            if ("jobpost".equalsIgnoreCase(action)) {
+        if (action == null) {
+            jobList(request, response);
+            return;
+        }
+
+        switch (action.toLowerCase()) {
+            case "edit":
+                handleEdit(request, response);
+                break;
+            case "delete":
+                handleDelete(request, response);
+                break;
+            case "update":
+                handleUpdate(request, response);
+                break;
+            case "jobpost":
                 handlePostJob(request, response);
-                return;
-            }
-            else if ("update".equalsIgnoreCase(action)) {
-                String jobId = request.getParameter("job_id");
-                System.out.println("Update action for job ID: " + jobId);
-                
-                Job job = jobService.getJobById(jobId);
-
-                if (job != null) {
-                    job.setTitle(request.getParameter("title"));
-                    job.setDescription(request.getParameter("description"));
-                    job.setLocation(request.getParameter("location"));
-                    job.setSalary(Double.parseDouble(request.getParameter("salary")));
-                    job.setExperience_required(request.getParameter("experience_required"));
-                    job.setJob_type(request.getParameter("job_type"));
-                    job.setMobile_no(request.getParameter("mobile_no"));
-
-                    boolean updated = jobService.updateJob(job);
-                    if (updated) {
-                        session.setAttribute("successMsg", "Job updated successfully!");
-                    } else {
-                        session.setAttribute("errorMsg", "Failed to update job!");
-                    }
-                }
-            } else if ("delete".equalsIgnoreCase(action)) {
-                String jobId = request.getParameter("job_id");
-                System.out.println("Delete action for job ID: " + jobId);
-                boolean deleted = jobService.deleteJob(jobId);
-                if (deleted) {
-                    session.setAttribute("successMsg", "Job deleted successfully!");
-                } else {
-                    session.setAttribute("errorMsg", "Failed to delete job!");
-                }
-            }
-
-            response.sendRedirect("RecruiterServlet");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            session.setAttribute("errorMsg", "Something went wrong: " + e.getMessage());
-            response.sendRedirect("manageJobs.jsp");
+                break;
+            case "managejob":
+                jobList(request, response);
+                break;
+            default:
+                jobList(request, response);
+                break;
         }
     }
 
-    private void handlePostJob(HttpServletRequest request, HttpServletResponse response) {
+    private void handleEdit(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String jobId = request.getParameter("job_id");
+        System.out.println("Edit action for job ID: " + jobId);
+        
+        Job job = jobService.getJobById(jobId);
+        System.out.println("Job found for edit: " + (job != null ? job.getTitle() : "null"));
+        
+        request.setAttribute("updateJob", job);
+        jobList(request, response);
+    }
+
+    private void handleDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        
+        String jobId = request.getParameter("job_id");
+        System.out.println("Delete action for job ID: " + jobId);
+        
+        boolean deleted = jobService.deleteJob(jobId);
+        if (deleted) {
+            session.setAttribute("successMsg", "Job deleted successfully!");
+        } else {
+            session.setAttribute("errorMsg", "Failed to delete job!");
+        }
+        
+        response.sendRedirect("RecruiterServlet?action=managejob");
+    }
+
+    
+    private void handleUpdate(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        
+        String jobId = request.getParameter("job_id");
+        System.out.println("Update action for job ID: " + jobId);
+        
+        Job job = jobService.getJobById(jobId);
+
+        if (job != null) {
+            job.setTitle(request.getParameter("title"));
+            job.setDescription(request.getParameter("description"));
+            job.setLocation(request.getParameter("location"));
+            job.setSalary(Double.parseDouble(request.getParameter("salary")));
+            job.setExperience_required(request.getParameter("experience_required"));
+            job.setJob_type(request.getParameter("job_type"));
+            job.setMobile_no(request.getParameter("mobile_no"));
+
+            boolean updated = jobService.updateJob(job);
+            if (updated) {
+                session.setAttribute("successMsg", "Job updated successfully!");
+            } else {
+                session.setAttribute("errorMsg", "Failed to update job!");
+            }
+        } else {
+            session.setAttribute("errorMsg", "Job not found!");
+        }       
+        response.sendRedirect("RecruiterServlet?action=managejob");
+    }
+
+    private void handlePostJob(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         HttpSession session = request.getSession();
 
         String userId = (String) session.getAttribute("user_id");
         if (userId == null) {
             session.setAttribute("errorMsg", "Please login first!");
-            try {
-                response.sendRedirect("./auth/login.jsp");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            response.sendRedirect("auth/login.jsp");
             return;
         }
 
@@ -186,11 +175,47 @@ public class RecruiterServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             session.setAttribute("errorMsg", "Error: " + e.getMessage());
+            response.sendRedirect("JobPost.jsp");
+        }
+    }
+
+    private void jobList(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("jobList method called");
+        
+        int currentPage = 1;
+        int recordsPerPage = 5;
+        if (request.getParameter("page") != null) {
             try {
-                response.sendRedirect("./JobPost.jsp");
-            } catch (IOException ex) {
-                ex.printStackTrace();
+                currentPage = Integer.parseInt(request.getParameter("page"));
+            } 
+            catch (NumberFormatException e) {
+                currentPage = 1;
             }
         }
+
+        List<Job> allJobs = jobService.getAllJobs();
+        System.out.println("Total jobs retrieved from service: " + (allJobs != null ? allJobs.size() : "null"));
+
+        if (allJobs == null) {
+            allJobs = new java.util.ArrayList<>();
+        }
+
+        int startIndex = (currentPage - 1) * recordsPerPage;
+        int endIndex = Math.min(startIndex + recordsPerPage, allJobs.size());
+        int totalPages = (int) Math.ceil(allJobs.size() * 1.0 / recordsPerPage);
+
+        
+        startIndex = Math.max(0, Math.min(startIndex, allJobs.size()));
+        endIndex = Math.max(startIndex, Math.min(endIndex, allJobs.size()));
+
+        List<Job> jobsPage = allJobs.subList(startIndex, endIndex);
+        System.out.println("Jobs for page " + currentPage + ": " + jobsPage.size() + " items");
+
+        request.setAttribute("jobs", jobsPage);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+
+        request.getRequestDispatcher("ManageJobs.jsp").forward(request, response);
     }
 }

@@ -17,25 +17,23 @@ public class JobServiceImpl implements IJobService {
 
 	@Override
 	public Job getJobById(String jobId) {
-		return null;
+		return jobdao.getJobById(jobId);
 	}
 
 	@Override
 	public boolean deleteJob(String jobId) {
 		// TODO Auto-generated method stub
-		return false;
+		return jobdao.deleteJob(jobId);
 	}
 
 	@Override
 	public List<Job> getAllJobs() {
-		// TODO Auto-generated method stub
-		return null;
+		return jobdao.getAllJobs();
 	}
 
 	@Override
 	public boolean updateJob(Job job) {
-		// TODO Auto-generated method stub
-		return false;
+		return jobdao.updateJob(job);
 	}
 
 	

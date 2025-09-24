@@ -1,16 +1,25 @@
 package com.jobportal.util;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.util.Map;
 
 public class CloudinaryUtil {
-
-//	
-//	 private static Cloudinary cloudinary;
-//	  
-//	  static { cloudinary = new Cloudinary(ObjectUtils.asMap("cloud_name", "root",
-//	  "api_key", "242116398141651", "api_secret", "2KbiyoNDu_Wp-2pulhQ1MZI3RbI"));
-//	  }
-//	  
-//	  public static Cloudinary getCloudinary() { return cloudinary; }
-//	 
-
+    private static Cloudinary cloudinary;
+    
+    static {
+        // Configure Cloudinary with your credentials
+    	
+        Map config = ObjectUtils.asMap(
+            "cloud_name", "your-cloud-name",
+            "api_key", "your-api-key",
+            "api_secret", "your-api-secret",
+            "secure", true
+        );
+        cloudinary = new Cloudinary(config);
+    }
+    
+    public static Cloudinary getCloudinary() {
+        return cloudinary;
+    }
 }

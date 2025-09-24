@@ -122,7 +122,7 @@ public class JobDaoImpl implements IJobDao {
                 job.setJob_type(rs.getString("job_type"));
                 jobs.add(job);
             }
-            System.out.println("------------------->>>   "+jobs);
+            System.out.println("------------------->>>   h"+jobs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
