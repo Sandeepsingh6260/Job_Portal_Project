@@ -16,8 +16,8 @@ public class UserDaoImpl implements IUserDao {
     private String sql = "";
 
     public UserDaoImpl() {
-        con = DbConnection.getConnection();
-    }
+        con = DbConnection.getConnection();    
+        }
 
     @Override
     public Boolean Register(User user) {

@@ -198,18 +198,29 @@ public class AuthenticationServlet extends HttpServlet {
         }
 
         User user = userService.login(email, password);
+        System.out.println("user: " + user);
 
         if (user != null) {
-            session.setAttribute("session", user);  
+            // ✅ CORRECT SESSION ATTRIBUTES SET KAREIN
+            session.setAttribute("user", user);  
+            session.setAttribute("user_id", user.getUser_id()); // ✅ IMPORTANT FOR DASHBOARD
+            session.setAttribute("user_name", user.getUser_name());
+            session.setAttribute("user_role", user.getUser_role().name());
+            
+            System.out.println("Login Successful: " + user.getUser_name() + " | Role: " + user.getUser_role());
+            
             if (user.getUser_role() == RoleType.JOB_SEEKER) {
                 response.sendRedirect("jobSeeker.jsp");
             }
             else {
-                response.sendRedirect("Recruiter.jsp");
+                // ✅ RecruiterServlet ko call karein dashboard ke liye
+                response.sendRedirect("RecruitersServlet?action=dashboard");
             }
         } else {
             session.setAttribute("loginError", "Invalid Email or Password!");
+            System.out.println("Login failed for email: " + email);
             response.sendRedirect("auth/login.jsp");
         }
     }
-}
+    }
+

@@ -4,6 +4,9 @@ import com.jobportal.model.Job;
 
 public interface IJobService {
 
-	boolean savejob(Job job);
+	
+	public boolean jobpost(Job job);
+	public boolean saveJob(Job job);
+	public int getActiveJobsCount(String recruiterId);
 
 }

@@ -8,14 +8,14 @@ public class DbConnection {
 	private static final String DB_NAME="job_portal";
 	private static final String DB_URL="jdbc:mysql://localhost:3306/"+DB_NAME;
 	private static final String DB_USER="root";
-	private static final String DB_PASSWORD="Sandeep@#1";
+	private static final String DB_PASSWORD="garima123";
 	public static Connection con=null;
 
 	public static Connection getConnection() {
-		if(con==null) {
+//		if(con==null) {
 			return getConnection(DB_URL,DB_USER,DB_PASSWORD);
-		}
-		return con;
+//		}
+//		return con;
 		
 	}
 

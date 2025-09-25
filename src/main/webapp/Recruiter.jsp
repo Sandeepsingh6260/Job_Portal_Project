@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,6 +27,26 @@
     <link rel="stylesheet" href="assets/css/demo.css">
 </head>
 <body>
+    <%
+        // Session check and dynamic variables
+        String userId = (String) session.getAttribute("user_id");
+        if (userId == null) {
+            response.sendRedirect("./auth/login.jsp");
+            return;
+        }
+        
+        // Default values agar attributes na milein
+        Integer activeJobs = (Integer) request.getAttribute("activeJobs");
+        Integer totalApplications = (Integer) request.getAttribute("totalApplications"); 
+        Integer hires = (Integer) request.getAttribute("hires");
+        Integer responseRate = (Integer) request.getAttribute("responseRate");
+        
+        if (activeJobs == null) activeJobs = 0;
+        if (totalApplications == null) totalApplications = 0;
+        if (hires == null) hires = 0;
+        if (responseRate == null) responseRate = 0;
+    %>
+    
     <div class="wrapper">
         <!-- Sidebar -->
         <div class="sidebar" data-background-color="dark">
@@ -63,7 +82,7 @@
                             <div class="collapse" id="dashboard">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="#">
+                                        <a href="RecruitersServlet?action=dashboard">
                                             <span class="sub-item">Recruiter Overview</span>
                                         </a>
                                     </li>
@@ -450,7 +469,7 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category">Active Jobs</p>
-                                                <h4 class="card-title">45</h4>
+                                                <h4 class="card-title"><%= activeJobs %></h4>
                                             </div>
                                         </div>
                                     </div>
@@ -469,7 +488,7 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category">Applications</p>
-                                                <h4 class="card-title">320</h4>
+                                                <h4 class="card-title"><%= totalApplications %></h4>
                                             </div>
                                         </div>
                                     </div>
@@ -488,7 +507,7 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category">Hires</p>
-                                                <h4 class="card-title">15</h4>
+                                                <h4 class="card-title"><%= hires %></h4>
                                             </div>
                                         </div>
                                     </div>
@@ -507,7 +526,7 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category">Response Rate</p>
-                                                <h4 class="card-title">85%</h4>
+                                                <h4 class="card-title"><%= responseRate %>%</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -791,4 +810,3 @@
     </script>
 </body>
 </html>
-

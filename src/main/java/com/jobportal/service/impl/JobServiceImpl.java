@@ -9,8 +9,22 @@ public class JobServiceImpl implements IJobService {
 
 	IJobDao jobdao = new JobDaoImpl();
 	
-	public boolean savejob(Job job) {		
+	
+
+	@Override
+	public boolean jobpost(Job job) {
 		return jobdao.jobpost(job);
+	}
+
+	@Override
+	public boolean saveJob(Job job) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getActiveJobsCount(String recruiterId) {
+		 return jobdao.getActiveJobsCount(recruiterId);
 	}
 
 }
