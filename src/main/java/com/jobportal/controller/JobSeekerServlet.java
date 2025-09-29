@@ -183,52 +183,71 @@ System.out.println("view dashboard == jobseeker == ");
 
     private void uploadOrUpdateResume(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        try {
-//            String skills = request.getParameter("skills");
-//            int experienceYears = Integer.parseInt(request.getParameter("experience_years"));
-//            Part filePart = request.getPart("resumeFile");
-//
-//            if (filePart == null || filePart.getSize() == 0) {
-//                setSessionMessage(session, "Please select a resume file", "danger");
-//                response.sendRedirect("JobSeekerServlet?action=viewDashboard");
-//                return;
-//            }
-//
+    	
+    	System.out.println("resume upload method ");
+    	
+        HttpSession session = request.getSession();
+        try {
+            String skills = request.getParameter("skills");
+            int experienceYears = Integer.parseInt(request.getParameter("experience_years"));
+            Part filePart = request.getPart("resumeFile");
+
+            if (filePart == null || filePart.getSize() == 0) {
+                setSessionMessage(session, "Please select a resume file", "danger");
+                response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+                return;
+            }
+            System.out.println(filePart);
+//            Part filePart = request.getPart("resume");
+            InputStream inputStream = filePart.getInputStream();
+
+            // Upload to a clean folder path
+            Map result = CloudinaryUtil.uploadFile(inputStream, "job-portal/resumes", null);
+
+            // Get correct URL
+            String resumeUrl = (String) result.get("secure_url");
+
+            System.out.println("Uploaded Resume URL: " + resumeUrl);
+
+
 //            // Upload to Cloudinary using CloudinaryUtil
 //            String publicId = "job-portal/resumes/resume_" + user.getUser_id() + "_" + System.currentTimeMillis();
 //            InputStream inputStream = filePart.getInputStream();
 //            Map uploadResult = CloudinaryUtil.uploadFile(inputStream, "job-portal/resumes", publicId);
 //            String fileUrl = (String) uploadResult.get("secure_url");
-//
-//            Resume resume = resumeService.getResumeByUserId(user.getUser_id());
-//            if (resume != null) {
-//                // Delete old resume from Cloudinary
-//                if (resume.getFile_path() != null) {
-//                    String oldPublicId = CloudinaryUtil.extractPublicIdFromUrl(resume.getFile_path());
-//                    if (oldPublicId != null) CloudinaryUtil.getCloudinary().uploader().destroy(oldPublicId, new HashMap<>());
-//                }
-//                resume.setSkills(skills);
-//                resume.setExperience_years(experienceYears);
-//                resume.setFile_path(fileUrl);
-//                resumeService.updateResume(resume);
-//                setSessionMessage(session, "Resume updated successfully!", "success");
-//            } else {
-//                resume = new Resume();
-//                resume.setResume_id(generateResumeId());
-//                resume.setUser_id(user.getUser_id());
-//                resume.setSkills(skills);
-//                resume.setExperience_years(experienceYears);
-//                resume.setFile_path(fileUrl);
-//                resume.setStatus(true);
-//                resumeService.saveResume(resume);
-//                setSessionMessage(session, "Resume uploaded successfully!", "success");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            setSessionMessage(session, "Error uploading resume: " + e.getMessage(), "danger");
-//        }
-//        response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+            
+        	System.out.println(resumeUrl);
+
+            Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+            if (resume != null) {
+                // Delete old resume from Cloudinary
+                if (resume.getFile_path() != null) {
+                    String oldPublicId = CloudinaryUtil.extractPublicIdFromUrl(resume.getFile_path());
+                    if (oldPublicId != null) CloudinaryUtil.getCloudinary().uploader().destroy(oldPublicId, new HashMap<>());
+                }
+                resume.setSkills(skills);
+                resume.setExperience_years(experienceYears);
+                resume.setFile_path(resumeUrl);
+                resumeService.updateResume(resume);
+                setSessionMessage(session, "Resume updated successfully!", "success");
+            } else {
+                resume = new Resume();
+                resume.setResume_id(generateResumeId());
+                resume.setUser_id(user.getUser_id());
+                resume.setSkills(skills);
+                resume.setExperience_years(experienceYears);
+                resume.setFile_path(resumeUrl);
+                resume.setStatus(true);
+                resumeService.saveResume(resume);
+                setSessionMessage(session, "Resume uploaded successfully!", "success");
+            }
+        } 
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+            setSessionMessage(session, "Error uploading resume: " + e.getMessage(), "danger");
+        }
+         response.sendRedirect("JobSeekerServlet?action=viewDashboard");
     }
 
     private void applyForJob(HttpServletRequest request, HttpServletResponse response, User user)
