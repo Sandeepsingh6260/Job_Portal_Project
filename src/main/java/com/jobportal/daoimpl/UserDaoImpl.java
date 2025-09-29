@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import com.jobportal.dao.IUserDao;
 import com.jobportal.enums.RoleType;
+import com.jobportal.model.Company;
 import com.jobportal.model.User;
 import com.jobportal.util.DbConnection;
 
@@ -22,7 +23,8 @@ public class UserDaoImpl implements IUserDao {
     @Override
     public Boolean Register(User user) {
         try {
-            if (user.getUser_role() == RoleType.JOB_SEEKER) {
+            if (user.getUser_role() == RoleType.JOB_SEEKER)
+            {
                 System.out.println("seeker");
                 sql = "INSERT INTO users (user_id,user_name,user_email,user_password,location,user_role) "
                     + "VALUES (?, ?, ?, ?, ?, ?)";
@@ -33,7 +35,8 @@ public class UserDaoImpl implements IUserDao {
                 pst.setString(4, user.getUser_password());
                 pst.setString(5, user.getLocation());
                 pst.setString(6, user.getUser_role().name());
-            } else if (user.getUser_role() == RoleType.RECRUITER) {
+            }
+            else if (user.getUser_role() == RoleType.RECRUITER) {
             	
                 sql = "INSERT INTO users (user_id,user_name,user_email,user_password,location,user_role,company_id) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -81,12 +84,11 @@ public class UserDaoImpl implements IUserDao {
         return false;
     }
 
-    public User login(String email, String password) {
-        sql = "SELECT * FROM users WHERE user_email = ? AND user_password = ?";
+    public User login(String email) {
+        sql = "SELECT * FROM users WHERE user_email = ? ";
         try {
             pst = con.prepareStatement(sql);
             pst.setString(1, email);
-            pst.setString(2, password);
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
@@ -98,11 +100,87 @@ public class UserDaoImpl implements IUserDao {
                 user.setLocation(rs.getString("location"));
                 user.setUser_role(RoleType.valueOf(rs.getString("user_role")));
                 user.setCompany_id(rs.getString("company_id"));
+                
                 return user;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    
+    @Override
+    public boolean UpdateUser(User user) {
+        String sql = "UPDATE users SET user_name=?, user_password=?, location=? WHERE user_id=?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, user.getUser_name());
+            pst.setString(2, user.getUser_password()); // पहले से encoded password
+            pst.setString(3, user.getLocation());
+            pst.setString(4, user.getUser_id());
+
+            int rows = pst.executeUpdate();
+            System.out.println("User updated rows: " + rows);
+            return rows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    
+    @Override
+    public boolean UpdateCompany(Company company) {
+        String sql = "UPDATE company SET company_name=?, company_description=?, company_location=?, phoneNo=? WHERE company_id=?";
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, company.getCompany_name());
+            pst.setString(2, company.getCompany_description());
+            pst.setString(3, company.getCompany_location());
+            pst.setString(4, company.getMobile());
+            pst.setString(5, company.getCompany_id());
+
+            int rows = pst.executeUpdate();
+            System.out.println("Company updated rows: " + rows);
+            return rows > 0;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public Boolean UpdateUserAndCompany(User user, Company company) {
+        try {
+            // Update User
+        	
+             sql = "UPDATE users SET user_name=?, user_password=?, location=? WHERE user_id=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, user.getUser_name());
+            pst.setString(2, user.getUser_password()); // Already BCrypt encoded
+            pst.setString(3, user.getLocation());
+            pst.setString(4, user.getUser_id());
+            int userUpdate = pst.executeUpdate();
+            System.out.println("User update count: " + userUpdate);
+
+            // Update Company if RECRUITER
+            
+            
+            if (user.getUser_role() == RoleType.RECRUITER && company != null) {
+                sql = "UPDATE company SET company_name=?, company_description=?, company_location=?, phoneNo=? WHERE company_id=?";
+                pst = con.prepareStatement(sql);
+                pst.setString(1, company.getCompany_name());
+                pst.setString(2, company.getCompany_description());
+                pst.setString(3, company.getCompany_location());
+                pst.setString(4, company.getMobile());
+                pst.setString(5, company.getCompany_id());
+                int companyUpdate = pst.executeUpdate();
+                System.out.println("Company update count: " + companyUpdate);
+            }
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace(); // यहां exception देखो
+            return false;
+        }
     }
 }

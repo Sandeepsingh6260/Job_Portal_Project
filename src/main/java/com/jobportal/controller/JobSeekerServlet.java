@@ -1,16 +1,20 @@
 package com.jobportal.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 
-import org.apache.tomcat.jakartaee.commons.lang3.ObjectUtils;
-
-import com.cloudinary.Cloudinary;
+import com.jobportal.enums.StatusType;
+import com.jobportal.model.Application;
+import com.jobportal.model.Job;
 import com.jobportal.model.Resume;
+import com.jobportal.model.User;
+import com.jobportal.service.IApplicationService;
+import com.jobportal.service.IJobService;
+import com.jobportal.service.IResumeService;
+import com.jobportal.service.impl.ApplicationServiceImpl;
+import com.jobportal.service.impl.JobServiceImpl;
+import com.jobportal.service.impl.ResumeServiceImpl;
 import com.jobportal.util.CloudinaryUtil;
 
 import jakarta.servlet.ServletException;
@@ -23,409 +27,314 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
 @WebServlet("/JobSeekerServlet")
-@MultipartConfig(maxFileSize = 1024 * 1024 * 5, // 5MB
-		maxRequestSize = 1024 * 1024 * 10 // 10MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 1024 * 1024 * 5,
+        maxRequestSize = 1024 * 1024 * 10
 )
 public class JobSeekerServlet extends HttpServlet {
-	private JobSeekerService jobSeekerService;
-	private ResumeService resumeService;
-	private JobApplicationService jobApplicationService;
-	private Cloudinary cloudinary;
-
-	@Override
-	public void init() throws ServletException {
-		super.init();
-		jobSeekerService = new JobSeekerService();
-		resumeService = new ResumeService();
-		jobApplicationService = new JobApplicationService();
-		cloudinary = CloudinaryUtil.getCloudinary();
-	}
-
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		HttpSession session = request.getSession();
-		JobSeeker jobSeeker = (JobSeeker) session.getAttribute("jobSeeker");
-
-		if (jobSeeker == null) {
-			response.sendRedirect(request.getContextPath() + "/login");
-			return;
-		}
-
-		String action = request.getParameter("action");
-
-		try {
-			if ("viewDashboard".equals(action) || action == null) {
-				viewDashboard(request, response, jobSeeker);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			request.setAttribute("message", "Error loading dashboard: " + e.getMessage());
-			request.setAttribute("messageType", "danger");
-			request.getRequestDispatcher("/job-seeker-dashboard.jsp").forward(request, response);
-		}
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		HttpSession session = request.getSession();
-		JobSeeker jobSeeker = (JobSeeker) session.getAttribute("jobSeeker");
-
-		if (jobSeeker == null) {
-			response.sendRedirect(request.getContextPath() + "/login.jsp");
-			return;
-		}
-
-		String action = request.getParameter("action");
-
-		try {
-			switch (action) {
-			case "uploadResume":
-				uploadResume(request, response, jobSeeker);
-				break;
-			case "updateProfile":
-				updateProfile(request, response, jobSeeker);
-				break;
-			case "deleteResume":
-				deleteResume(request, response, jobSeeker);
-				break;
-			default:
-				viewDashboard(request, response, jobSeeker);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			request.setAttribute("message", "Error processing request: " + e.getMessage());
-			request.setAttribute("messageType", "danger");
-			viewDashboard(request, response, jobSeeker);
-		}
-	}
-
-	private void viewDashboard(HttpServletRequest request, HttpServletResponse response, JobSeeker jobSeeker)
-			throws ServletException, IOException {
-
-		try {
-			// Get job seeker statistics
-			int appliedJobsCount = jobApplicationService.getAppliedJobsCount(jobSeeker.getId());
-			int savedJobsCount = jobSeekerService.getSavedJobsCount(jobSeeker.getId());
-			int interviewCount = jobApplicationService.getInterviewCount(jobSeeker.getId());
-			int profileStrength = calculateProfileStrength(jobSeeker);
-
-			// Get recent applications
-			List<JobApplication> recentApplications = jobApplicationService.getRecentApplications(jobSeeker.getId(), 5);
-
-			// Get resume
-			Resume resume = resumeService.getResumeByJobSeekerId(jobSeeker.getId());
-
-			// Set attributes for JSP
-			request.setAttribute("appliedJobsCount", appliedJobsCount);
-			request.setAttribute("savedJobsCount", savedJobsCount);
-			request.setAttribute("interviewCount", interviewCount);
-			request.setAttribute("profileStrength", profileStrength);
-			request.setAttribute("recentApplications", recentApplications);
-			request.setAttribute("resume", resume);
-
-			request.getRequestDispatcher("/job-seeker-dashboard.jsp").forward(request, response);
-
-		} catch (Exception e) {
-			throw new ServletException("Error loading dashboard", e);
-		}
-	}
-
-	private void uploadResume(HttpServletRequest request, HttpServletResponse response, JobSeeker jobSeeker)
-			throws ServletException, IOException {
-
-		List<String> errors = new ArrayList<>();
-
-		try {
-			Part filePart = request.getPart("resumeFile");
-			String resumeTitle = request.getParameter("resumeTitle");
-
-			// Server-side validation
-			if (filePart == null || filePart.getSize() == 0) {
-				errors.add("Please select a resume file");
-			}
-
-			if (resumeTitle == null || resumeTitle.trim().isEmpty()) {
-				errors.add("Resume title is required");
-			} else if (resumeTitle.length() > 100) {
-				errors.add("Resume title must be less than 100 characters");
-			}
-
-			if (!errors.isEmpty()) {
-				request.setAttribute("errors", errors);
-				viewDashboard(request, response, jobSeeker);
-				return;
-			}
-
-			// Validate file type and size on server side
-			String fileName = filePart.getSubmittedFileName();
-			String fileExtension = fileName.substring(fileName.lastIndexOf(".")).toLowerCase();
-			List<String> allowedExtensions = Arrays.asList(".pdf", ".doc", ".docx");
-
-			if (!allowedExtensions.contains(fileExtension)) {
-				errors.add("Invalid file type. Please upload PDF, DOC, or DOCX files only.");
-			}
-
-			long fileSize = filePart.getSize();
-			long maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
-
-			if (fileSize > maxFileSize) {
-				errors.add("File size must be less than 5MB");
-			}
-
-			if (fileSize == 0) {
-				errors.add("Selected file is empty");
-			}
-
-			if (!errors.isEmpty()) {
-				request.setAttribute("errors", errors);
-				viewDashboard(request, response, jobSeeker);
-				return;
-			}
-
-			// Upload to Cloudinary
-			Map uploadResult = cloudinary.uploader().upload(filePart.getInputStream(),
-					ObjectUtils.asMap("resource_type", "auto", "folder", "job-portal/resumes", "public_id",
-							"resume_" + jobSeeker.getId() + "_" + System.currentTimeMillis()));
-
-			String fileUrl = (String) uploadResult.get("secure_url");
-			String publicId = (String) uploadResult.get("public_id");
-			double fileSizeMB = fileSize / (1024.0 * 1024.0); // MB
-
-			// Check if resume already exists
-			Resume existingResume = resumeService.getResumeByJobSeekerId(jobSeeker.getId());
-			if (existingResume != null) {
-				// Delete old resume from Cloudinary
-				cloudinary.uploader().destroy(existingResume.getPublicId(), ObjectUtils.emptyMap());
-				// Update existing resume
-				existingResume.setTitle(resumeTitle);
-				existingResume.setFileName(fileName);
-				existingResume.setFileUrl(fileUrl);
-				existingResume.setFileSize(fileSizeMB);
-				existingResume.setPublicId(publicId);
-				existingResume.setUploadDate(new Date());
-
-				boolean success = resumeService.updateResume(existingResume);
-
-				if (success) {
-					request.setAttribute("message", "Resume updated successfully!");
-					request.setAttribute("messageType", "success");
-				} else {
-					// Delete from Cloudinary if database update fails
-					cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-					request.setAttribute("message", "Error updating resume. Please try again.");
-					request.setAttribute("messageType", "danger");
-				}
-			} else {
-				// Create new Resume object
-				Resume resume = new Resume();
-				resume.setJobSeekerId(jobSeeker.getId());
-				resume.setTitle(resumeTitle);
-				resume.setFileName(fileName);
-				resume.setFileUrl(fileUrl);
-				resume.setFileSize(fileSizeMB);
-				resume.setPublicId(publicId);
-				resume.setUploadDate(new Date());
-
-				// Save to database
-				boolean success = resumeService.saveResume(resume);
-
-				if (success) {
-					request.setAttribute("message", "Resume uploaded successfully!");
-					request.setAttribute("messageType", "success");
-				} else {
-					// Delete from Cloudinary if database save fails
-					cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-					request.setAttribute("message", "Error uploading resume. Please try again.");
-					request.setAttribute("messageType", "danger");
-				}
-			}
-
-		} catch (Exception e) {
-			errors.add("Error uploading resume: " + e.getMessage());
-			request.setAttribute("errors", errors);
-			request.setAttribute("messageType", "danger");
-		}
-
-		viewDashboard(request, response, jobSeeker);
-	}
-
-	private void updateProfile(HttpServletRequest request, HttpServletResponse response, JobSeeker jobSeeker)
-			throws ServletException, IOException {
-
-		List<String> errors = new ArrayList<>();
-
-		try {
-			String fullName = request.getParameter("fullName");
-			String email = request.getParameter("email");
-			String phone = request.getParameter("phone");
-			String location = request.getParameter("location");
-			String summary = request.getParameter("summary");
-			String skills = request.getParameter("skills");
-
-			// Server-side validation
-			if (fullName == null || fullName.trim().isEmpty()) {
-				errors.add("Full name is required");
-			} else if (fullName.length() > 100) {
-				errors.add("Full name must be less than 100 characters");
-			}
-
-			if (email == null || email.trim().isEmpty()) {
-				errors.add("Email is required");
-			} else if (!isValidEmail(email)) {
-				errors.add("Please enter a valid email address");
-			} else if (email.length() > 100) {
-				errors.add("Email must be less than 100 characters");
-			}
-
-			if (phone == null || phone.trim().isEmpty()) {
-				errors.add("Phone number is required");
-			} else if (!isValidPhone(phone)) {
-				errors.add("Please enter a valid phone number");
-			}
-
-			if (location == null || location.trim().isEmpty()) {
-				errors.add("Location is required");
-			} else if (location.length() > 100) {
-				errors.add("Location must be less than 100 characters");
-			}
-
-			if (summary == null || summary.trim().isEmpty()) {
-				errors.add("Professional summary is required");
-			} else if (summary.length() > 1000) {
-				errors.add("Professional summary must be less than 1000 characters");
-			}
-
-			if (skills == null || skills.trim().isEmpty()) {
-				errors.add("Skills are required");
-			} else if (skills.length() > 500) {
-				errors.add("Skills must be less than 500 characters");
-			}
-
-			if (!errors.isEmpty()) {
-				request.setAttribute("errors", errors);
-				viewDashboard(request, response, jobSeeker);
-				return;
-			}
-
-			// Update job seeker profile information
-			jobSeeker.setFullName(fullName.trim());
-			jobSeeker.setEmail(email.trim());
-			jobSeeker.setPhone(phone.trim());
-			jobSeeker.setLocation(location.trim());
-			jobSeeker.setSummary(summary.trim());
-			jobSeeker.setSkills(skills.trim());
-
-			boolean success = jobSeekerService.updateJobSeeker(jobSeeker);
-
-			if (success) {
-				// Update session
-				request.getSession().setAttribute("jobSeeker", jobSeeker);
-				request.setAttribute("message", "Profile updated successfully!");
-				request.setAttribute("messageType", "success");
-			} else {
-				errors.add("Error updating profile. Please try again.");
-				request.setAttribute("errors", errors);
-				request.setAttribute("messageType", "danger");
-			}
-
-		} catch (Exception e) {
-			errors.add("Error updating profile: " + e.getMessage());
-			request.setAttribute("errors", errors);
-			request.setAttribute("messageType", "danger");
-		}
-
-		viewDashboard(request, response, jobSeeker);
-	}
-
-	private void deleteResume(HttpServletRequest request, HttpServletResponse response, JobSeeker jobSeeker)
-			throws ServletException, IOException {
-
-		List<String> errors = new ArrayList<>();
-
-		try {
-			String resumeIdParam = request.getParameter("resumeId");
-
-			if (resumeIdParam == null || resumeIdParam.trim().isEmpty()) {
-				errors.add("Resume ID is required");
-				request.setAttribute("errors", errors);
-				viewDashboard(request, response, jobSeeker);
-				return;
-			}
-
-			int resumeId = Integer.parseInt(resumeIdParam);
-			Resume resume = resumeService.getResumeById(resumeId);
-
-			if (resume != null && resume.getJobSeekerId() == jobSeeker.getId()) {
-				// Delete from Cloudinary
-				cloudinary.uploader().destroy(resume.getPublicId(), ObjectUtils.emptyMap());
-
-				// Delete from database
-				boolean success = resumeService.deleteResume(resume.getId());
-
-				if (success) {
-					request.setAttribute("message", "Resume deleted successfully!");
-					request.setAttribute("messageType", "success");
-				} else {
-					errors.add("Error deleting resume. Please try again.");
-					request.setAttribute("errors", errors);
-					request.setAttribute("messageType", "danger");
-				}
-			} else {
-				errors.add("Resume not found or access denied.");
-				request.setAttribute("errors", errors);
-				request.setAttribute("messageType", "danger");
-			}
-
-		} catch (NumberFormatException e) {
-			errors.add("Invalid resume ID format");
-			request.setAttribute("errors", errors);
-			request.setAttribute("messageType", "danger");
-		} catch (Exception e) {
-			errors.add("Error deleting resume: " + e.getMessage());
-			request.setAttribute("errors", errors);
-			request.setAttribute("messageType", "danger");
-		}
-
-		viewDashboard(request, response, jobSeeker);
-	}
-
-	// Helper methods for validation
-	private boolean isValidEmail(String email) {
-		String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-		return email != null && email.matches(emailRegex);
-	}
-
-	private boolean isValidPhone(String phone) {
-		// Basic phone validation - allows numbers, spaces, parentheses, hyphens
-		String phoneRegex = "^[\\d\\s\\-\\(\\)\\+]+$";
-		return phone != null && phone.matches(phoneRegex) && phone.replaceAll("\\D", "").length() >= 10;
-	}
-
-	private int calculateProfileStrength(JobSeeker jobSeeker) {
-		int strength = 0;
-
-		if (jobSeeker.getFullName() != null && !jobSeeker.getFullName().trim().isEmpty())
-			strength += 15;
-		if (jobSeeker.getEmail() != null && !jobSeeker.getEmail().trim().isEmpty())
-			strength += 15;
-		if (jobSeeker.getPhone() != null && !jobSeeker.getPhone().trim().isEmpty())
-			strength += 15;
-		if (jobSeeker.getLocation() != null && !jobSeeker.getLocation().trim().isEmpty())
-			strength += 10;
-		if (jobSeeker.getSummary() != null && !jobSeeker.getSummary().trim().isEmpty())
-			strength += 20;
-		if (jobSeeker.getSkills() != null && !jobSeeker.getSkills().trim().isEmpty())
-			strength += 15;
-
-		// Check if resume exists
-		Resume resume = resumeService.getResumeByJobSeekerId(jobSeeker.getId());
-		if (resume != null)
-			strength += 10;
-
-		return Math.min(strength, 100);
-	}
+    private static final long serialVersionUID = 1L;
+
+    private IJobService jobService = new JobServiceImpl();
+    private IResumeService resumeService = new ResumeServiceImpl();
+    private IApplicationService applicationService = new ApplicationServiceImpl();
+
+    
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    	
+  System.out.println("JobSeekerServlet ------  do get ");
+  
+        User user = getLoggedInUser(request, response);
+        System.out.println("Job seeker user do get"+user);
+        
+        if (user == null) return;
+
+        String action = Optional.ofNullable(request.getParameter("action")).orElse("viewDashboard");
+        
+         System.out.println("action"+action);
+        try {
+            switch (action) {
+                case "viewJobs":
+                    viewAllJobs(request, response, user);
+                    break;
+                case "downloadResume":
+                    downloadResume(request, response, user);
+                    break;
+                case "viewApplications":
+                    viewApplications(request, response, user);
+                    break;
+                case "viewDashboard":
+                	viewDashboard(request, response, user);
+                	break;
+                default:
+                    viewDashboard(request, response, user);
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            setSessionMessage(request.getSession(), "Error processing request: " + e.getMessage(), "danger");
+            response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    	
+    	  System.out.println("JobSeekerServlet ------  do post ");
+
+        User user = getLoggedInUser(request, response);
+        if (user == null) return;
+
+        String action = request.getParameter("action");
+
+        try {
+            switch (action != null ? action : "") {
+                case "uploadResume":
+                case "updateResume":
+                    uploadOrUpdateResume(request, response, user);
+                    break;
+                case "applyJob":
+                    applyForJob(request, response, user);
+                    break;
+                case "deleteResume":
+                    deleteResume(request, response, user);
+                    break;
+                case "withdrawApplication":
+                    withdrawApplication(request, response, user);
+                    break;
+                default:
+                    response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            setSessionMessage(request.getSession(), "Error processing request: " + e.getMessage(), "danger");
+            response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+        }
+    }
+
+    // Helper: get logged-in user
+    
+    
+    private User getLoggedInUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	
+    	System.out.println("-------------->  getLoggedInUser");
+    	
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
+    	System.out.println(user);
+
+        if (user == null || "JOB_SEEKER".equals(user.getUser_role())) {
+        	System.out.println("get logged in user in condition  ====>> "+user);
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
+            return null;
+        }
+        
+        return user;
+    }
+
+    private void viewDashboard(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+    	
+    	System.out.println("method view dashboard enter");
+    	
+        List<Job> allJobs = jobService.getAllJobs();
+        Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+
+        request.setAttribute("allJobs", allJobs);
+        request.setAttribute("resume", resume);
+        request.setAttribute("activeTab", "dashboard");
+System.out.println("view dashboard == jobseeker == ");
+
+        request.getRequestDispatcher("jobSeeker.jsp").forward(request, response);
+        return;
+    }
+
+    private void viewAllJobs(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+        List<Job> allJobs = jobService.getAllJobs();
+        Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+        List<String> appliedJobIds = applicationService != null
+                ? applicationService.getAppliedJobIds(user.getUser_id())
+                : new ArrayList<>();
+
+        request.setAttribute("allJobs", allJobs);
+        request.setAttribute("resume", resume);
+        request.setAttribute("appliedJobIds", appliedJobIds);
+        request.setAttribute("activeTab", "jobs");
+
+        request.getRequestDispatcher("/jobseeker/dashboard.jsp").forward(request, response);
+    }
+
+    private void viewApplications(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+        List<Application> applications = applicationService != null
+                ? applicationService.getApplicationsByUser(user.getUser_id())
+                : new ArrayList<>();
+        Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+
+        request.setAttribute("applications", applications);
+        request.setAttribute("resume", resume);
+        request.setAttribute("activeTab", "applications");
+
+        request.getRequestDispatcher("/jobseeker/dashboard.jsp").forward(request, response);
+    }
+
+    private void uploadOrUpdateResume(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+//        HttpSession session = request.getSession();
+//        try {
+//            String skills = request.getParameter("skills");
+//            int experienceYears = Integer.parseInt(request.getParameter("experience_years"));
+//            Part filePart = request.getPart("resumeFile");
+//
+//            if (filePart == null || filePart.getSize() == 0) {
+//                setSessionMessage(session, "Please select a resume file", "danger");
+//                response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+//                return;
+//            }
+//
+//            // Upload to Cloudinary using CloudinaryUtil
+//            String publicId = "job-portal/resumes/resume_" + user.getUser_id() + "_" + System.currentTimeMillis();
+//            InputStream inputStream = filePart.getInputStream();
+//            Map uploadResult = CloudinaryUtil.uploadFile(inputStream, "job-portal/resumes", publicId);
+//            String fileUrl = (String) uploadResult.get("secure_url");
+//
+//            Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+//            if (resume != null) {
+//                // Delete old resume from Cloudinary
+//                if (resume.getFile_path() != null) {
+//                    String oldPublicId = CloudinaryUtil.extractPublicIdFromUrl(resume.getFile_path());
+//                    if (oldPublicId != null) CloudinaryUtil.getCloudinary().uploader().destroy(oldPublicId, new HashMap<>());
+//                }
+//                resume.setSkills(skills);
+//                resume.setExperience_years(experienceYears);
+//                resume.setFile_path(fileUrl);
+//                resumeService.updateResume(resume);
+//                setSessionMessage(session, "Resume updated successfully!", "success");
+//            } else {
+//                resume = new Resume();
+//                resume.setResume_id(generateResumeId());
+//                resume.setUser_id(user.getUser_id());
+//                resume.setSkills(skills);
+//                resume.setExperience_years(experienceYears);
+//                resume.setFile_path(fileUrl);
+//                resume.setStatus(true);
+//                resumeService.saveResume(resume);
+//                setSessionMessage(session, "Resume uploaded successfully!", "success");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            setSessionMessage(session, "Error uploading resume: " + e.getMessage(), "danger");
+//        }
+//        response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+    }
+
+    private void applyForJob(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        try {
+            String jobId = request.getParameter("jobId");
+            if (jobId == null || jobId.trim().isEmpty()) {
+                setSessionMessage(session, "Invalid job selection", "danger");
+                response.sendRedirect("JobSeekerServlet?action=viewJobs");
+                return;
+            }
+
+            Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+            if (resume == null) {
+                session.setAttribute("applyJobId", jobId);
+                setSessionMessage(session, "Please upload your resume before applying", "warning");
+                response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+                return;
+            }
+
+            boolean alreadyApplied = applicationService.hasUserAppliedForJob(user.getUser_id(), jobId);
+            if (alreadyApplied) {
+                setSessionMessage(session, "You have already applied for this job", "warning");
+                response.sendRedirect("JobSeekerServlet?action=viewJobs");
+                return;
+            }
+
+            Application app = new Application();
+            app.setId(generateApplicationId());
+            app.setUser_id(user.getUser_id());
+            app.setJob_id(jobId);
+            app.setStatusType(StatusType.PENDING);
+
+            boolean success = applicationService.applyForJob(app);
+            setSessionMessage(session, success ? "Applied successfully!" : "Error applying for job", success ? "success" : "danger");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            setSessionMessage(session, "Error applying for job: " + e.getMessage(), "danger");
+        }
+        response.sendRedirect("JobSeekerServlet?action=viewJobs");
+    }
+
+    private void deleteResume(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+//        HttpSession session = request.getSession();
+//        try {
+//            Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+//            if (resume != null) {
+//                if (resume.getFile_path() != null) {
+//                    String publicId = CloudinaryUtil.extractPublicIdFromUrl(resume.getFile_path());
+//                    if (publicId != null) CloudinaryUtil.getCloudinary().uploader().destroy(publicId, new HashMap<>());
+//                }
+//                resumeService.deleteResume(resume.getResume_id());
+//                setSessionMessage(session, "Resume deleted successfully!", "success");
+//            } else {
+//                setSessionMessage(session, "No resume found to delete", "warning");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            setSessionMessage(session, "Error deleting resume: " + e.getMessage(), "danger");
+//        }
+//        response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+    }
+
+    private void withdrawApplication(HttpServletRequest request, HttpServletResponse response, User user)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        try {
+            String applicationId = request.getParameter("applicationId");
+            Application application = applicationService.getApplicationById(applicationId);
+            if (application != null && user.getUser_id().equals(application.getUser_id())) {
+                boolean success = applicationService.withdrawApplication(applicationId);
+                setSessionMessage(session, success ? "Application withdrawn successfully!" : "Error withdrawing application", success ? "success" : "danger");
+            } else {
+                setSessionMessage(session, "Application not found", "danger");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            setSessionMessage(session, "Error withdrawing application: " + e.getMessage(), "danger");
+        }
+        response.sendRedirect("JobSeekerServlet?action=viewApplications");
+    }
+
+    private void downloadResume(HttpServletRequest request, HttpServletResponse response, User user)
+            throws IOException {
+        Resume resume = resumeService.getResumeByUserId(user.getUser_id());
+        if (resume != null && resume.getFile_path() != null) {
+            response.sendRedirect(resume.getFile_path() + "?fl_attachment");
+        } else {
+            response.sendRedirect("JobSeekerServlet?action=viewDashboard");
+        }
+    }
+
+    // Utility methods
+    private void setSessionMessage(HttpSession session, String message, String type) {
+        session.setAttribute("message", message);
+        session.setAttribute("messageType", type);
+    }
+
+    private String generateResumeId() {
+        return "RES_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    private String generateApplicationId() {
+        return "APP_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8);
+    }
 }

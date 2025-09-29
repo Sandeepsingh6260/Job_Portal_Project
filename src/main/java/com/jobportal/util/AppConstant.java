@@ -11,6 +11,8 @@ public class AppConstant {
 
     public static final String PASSWORD_REQUIRED = "Password is Required!";
     public static final String PASSWORD_NOT_VALID = "Password must be 8-20 chars, contain uppercase, lowercase, digit and special char!";
+    public static final String INVALID_PASSWORD = " Invalid Password!";
+
 
     
 

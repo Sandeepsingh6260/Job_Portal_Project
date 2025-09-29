@@ -49,5 +49,7 @@ public class Application extends Auditable {
 		return "Application [id=" + id + ", user_id=" + user_id + ", job_id=" + job_id + ", statusType=" + statusType
 				+ "]";
 	}
+
+
 	
 }

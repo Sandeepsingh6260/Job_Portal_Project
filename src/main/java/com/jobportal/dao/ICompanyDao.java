@@ -6,4 +6,9 @@ import com.jobportal.model.Company;
 public interface ICompanyDao {
 	public Boolean save(Company request);
 
+	Company getCompanyById(String companyId);
+
+	boolean UpdateCompany(Company company);
+	
+
 }

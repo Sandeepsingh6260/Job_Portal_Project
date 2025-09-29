@@ -5,6 +5,8 @@ package com.jobportal.service.impl;
 import com.jobportal.dao.IUserDao;
 import com.jobportal.daoimpl.CompnayDaoImpl;
 import com.jobportal.daoimpl.UserDaoImpl;
+import com.jobportal.enums.RoleType;
+import com.jobportal.model.Company;
 import com.jobportal.model.User;
 import com.jobportal.service.IUserService;
 
@@ -43,9 +45,24 @@ public class UserServiceImpl implements IUserService {
 	
 	
 	@Override
-	public User login(String email, String password) {
-	    return userService.login(email, password);  
+	public User login(String email) {
+	    return userService.login(email);  
 	}
+	
+	
+	@Override
+    public boolean UpdateUserAndCompany(User user, Company company) {
+        boolean userUpdated = userService.UpdateUser(user);   
+        boolean companyUpdated = true;
 
+        if (user.getUser_role() == RoleType.RECRUITER && company != null) {
+            companyUpdated = companyDao.UpdateCompany(company);
+        }
+
+        return userUpdated && companyUpdated;
+    }
+	
+	
+	
 
 }

@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <title>Job Portal Login</title>
 <style>
+/* Your existing CSS remains the same */
 body {
     margin: 0;
     padding: 0;
@@ -112,6 +113,7 @@ button:hover {
         <h1>Login</h1>
 
         <!-- Hidden dummy fields to prevent autofill -->
+        
         <input type="text" style="display:none">
         <input type="password" style="display:none">
 
@@ -119,21 +121,21 @@ button:hover {
         <label for="user_email">Email</label>
         <input type="email" id="user_email" name="user_email" 
                placeholder="Enter your email" 
-               value="<%= request.getAttribute("user_email_val") != null ? request.getAttribute("user_email_val") : "" %>">
+               value="<%= session.getAttribute("user_email_val") != null ? session.getAttribute("user_email_val") : "" %>">
         <div class="error">
-            <%= request.getAttribute("emailError") != null ? request.getAttribute("emailError") : "" %>
+            <%= session.getAttribute("emailError") != null ? session.getAttribute("emailError") : "" %>
         </div>
 
         <!-- Password -->
         <label for="user_password">Password</label>
         <input type="password" id="user_password" name="user_password" placeholder="Enter your password">
         <div class="error">
-            <%= request.getAttribute("passwordError") != null ? request.getAttribute("passwordError") : "" %>
+            <%= session.getAttribute("passwordError") != null ? session.getAttribute("passwordError") : "" %>
         </div>
 
         <!-- Invalid login -->
         <div class="error">
-            <%= request.getAttribute("loginError") != null ? request.getAttribute("loginError") : "" %>
+            <%= session.getAttribute("loginError") != null ? session.getAttribute("loginError") : "" %>
         </div>
 
         <button type="submit" name="action" value="login">Login</button>
