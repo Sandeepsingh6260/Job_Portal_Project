@@ -1,6 +1,7 @@
 package com.jobportal.controller;
 
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.util.*;
 
@@ -26,11 +27,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
+
 @WebServlet("/JobSeekerServlet")
+
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
         maxFileSize = 1024 * 1024 * 5,
         maxRequestSize = 1024 * 1024 * 10
 )
+
 public class JobSeekerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -46,13 +50,16 @@ public class JobSeekerServlet extends HttpServlet {
   System.out.println("JobSeekerServlet ------  do get ");
   
         User user = getLoggedInUser(request, response);
-        System.out.println("Job seeker user do get"+user);
+        
+       // System.out.println("Job seeker user do get"+user);
+        
         
         if (user == null) return;
 
         String action = Optional.ofNullable(request.getParameter("action")).orElse("viewDashboard");
         
          System.out.println("action"+action);
+         
         try {
             switch (action) {
                 case "viewJobs":
@@ -84,9 +91,14 @@ public class JobSeekerServlet extends HttpServlet {
     	  System.out.println("JobSeekerServlet ------  do post ");
 
         User user = getLoggedInUser(request, response);
+        
+        System.out.println("user print do post method  ---->  "+user);
+
         if (user == null) return;
 
         String action = request.getParameter("action");
+        
+       System.out.println("do post ---->  "+action);
 
         try {
             switch (action != null ? action : "") {
@@ -114,8 +126,7 @@ public class JobSeekerServlet extends HttpServlet {
     }
 
     // Helper: get logged-in user
-    
-    
+       
     private User getLoggedInUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
     	
     	System.out.println("-------------->  getLoggedInUser");
@@ -125,7 +136,8 @@ public class JobSeekerServlet extends HttpServlet {
         
     	System.out.println(user);
 
-        if (user == null || "JOB_SEEKER".equals(user.getUser_role())) {
+        if (user == null || "JOB_SEEKER".equals(user.getUser_role())) 
+        {
         	System.out.println("get logged in user in condition  ====>> "+user);
             response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
             return null;
@@ -145,26 +157,34 @@ public class JobSeekerServlet extends HttpServlet {
         request.setAttribute("allJobs", allJobs);
         request.setAttribute("resume", resume);
         request.setAttribute("activeTab", "dashboard");
-System.out.println("view dashboard == jobseeker == ");
+        request.setAttribute("user", user);
+        
+       System.out.println(" ---------->  view dashboard == jobseeker  enter == ");
 
         request.getRequestDispatcher("jobSeeker.jsp").forward(request, response);
         return;
     }
 
+
     private void viewAllJobs(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {
+
+    	System.out.println("----------> view job enter==========");
+    	
         List<Job> allJobs = jobService.getAllJobs();
+        
         Resume resume = resumeService.getResumeByUserId(user.getUser_id());
         List<String> appliedJobIds = applicationService != null
                 ? applicationService.getAppliedJobIds(user.getUser_id())
                 : new ArrayList<>();
-
+    
+        
         request.setAttribute("allJobs", allJobs);
         request.setAttribute("resume", resume);
         request.setAttribute("appliedJobIds", appliedJobIds);
         request.setAttribute("activeTab", "jobs");
 
-        request.getRequestDispatcher("/jobseeker/dashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("browseJobs.jsp").forward(request, response);
     }
 
     private void viewApplications(HttpServletRequest request, HttpServletResponse response, User user)
@@ -198,29 +218,19 @@ System.out.println("view dashboard == jobseeker == ");
                 return;
             }
             System.out.println(filePart);
-//            Part filePart = request.getPart("resume");
             InputStream inputStream = filePart.getInputStream();
 
-            // Upload to a clean folder path
             Map result = CloudinaryUtil.uploadFile(inputStream, "job-portal/resumes", null);
-
-            // Get correct URL
+          
             String resumeUrl = (String) result.get("secure_url");
 
             System.out.println("Uploaded Resume URL: " + resumeUrl);
-
-
-//            // Upload to Cloudinary using CloudinaryUtil
-//            String publicId = "job-portal/resumes/resume_" + user.getUser_id() + "_" + System.currentTimeMillis();
-//            InputStream inputStream = filePart.getInputStream();
-//            Map uploadResult = CloudinaryUtil.uploadFile(inputStream, "job-portal/resumes", publicId);
-//            String fileUrl = (String) uploadResult.get("secure_url");
             
         	System.out.println(resumeUrl);
 
             Resume resume = resumeService.getResumeByUserId(user.getUser_id());
-            if (resume != null) {
-                // Delete old resume from Cloudinary
+            if (resume != null)
+            {
                 if (resume.getFile_path() != null) {
                     String oldPublicId = CloudinaryUtil.extractPublicIdFromUrl(resume.getFile_path());
                     if (oldPublicId != null) CloudinaryUtil.getCloudinary().uploader().destroy(oldPublicId, new HashMap<>());
@@ -252,9 +262,16 @@ System.out.println("view dashboard == jobseeker == ");
 
     private void applyForJob(HttpServletRequest request, HttpServletResponse response, User user)
             throws ServletException, IOException {
+    	
+    	System.out.println("---------> job apply enter 1 ");
+    	
+    	
         HttpSession session = request.getSession();
         try {
             String jobId = request.getParameter("jobId");
+            
+            System.out.println("job id from apply method ----------"+jobId);
+            
             if (jobId == null || jobId.trim().isEmpty()) {
                 setSessionMessage(session, "Invalid job selection", "danger");
                 response.sendRedirect("JobSeekerServlet?action=viewJobs");
@@ -262,7 +279,12 @@ System.out.println("view dashboard == jobseeker == ");
             }
 
             Resume resume = resumeService.getResumeByUserId(user.getUser_id());
-            if (resume == null) {
+            
+            System.out.println("resume  from apply method ----------"+resume);
+            
+            
+            if (resume == null) 
+            {
                 session.setAttribute("applyJobId", jobId);
                 setSessionMessage(session, "Please upload your resume before applying", "warning");
                 response.sendRedirect("JobSeekerServlet?action=viewDashboard");
@@ -280,12 +302,22 @@ System.out.println("view dashboard == jobseeker == ");
             app.setId(generateApplicationId());
             app.setUser_id(user.getUser_id());
             app.setJob_id(jobId);
+            
+            String companyId=applicationService.getCompanyIdByJobId(jobId);
+            
+            System.out.println("company id ---> "+companyId);
+            
+            app.setCompany_id(companyId);
             app.setStatusType(StatusType.PENDING);
-
+            
+           
             boolean success = applicationService.applyForJob(app);
-            setSessionMessage(session, success ? "Applied successfully!" : "Error applying for job", success ? "success" : "danger");
-
-        } catch (Exception e) {
+            System.out.println("success-->"+success);         
+            
+          setSessionMessage(session, success ? "Applied successfully!" : "Error applying for job", success ? "success" : "danger");
+        }
+        catch (Exception e) 
+        {
             e.printStackTrace();
             setSessionMessage(session, "Error applying for job: " + e.getMessage(), "danger");
         }

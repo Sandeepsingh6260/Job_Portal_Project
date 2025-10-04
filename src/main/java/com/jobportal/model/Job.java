@@ -12,6 +12,7 @@ private Double salary;
 private String job_type;
 private String experience_required;
 private String mobile_no;
+private String company_name;
 
 
 	public Job() {
@@ -33,6 +34,34 @@ private String mobile_no;
 		this.mobile_no = mobile_no;
 
 	}
+	
+	public Job(String id, String title, String description, String user_id, String location, Double salary, String job_type,
+			String experience_required, String mobile_no, String company_name) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.user_id = user_id;
+		this.location = location;
+		this.salary = salary;
+		this.job_type = job_type;
+		this.experience_required = experience_required;
+		this.mobile_no = mobile_no;
+		this.company_name = company_name;
+	}
+	
+	
+	
+
+	public String getCompany_name() {
+		return company_name;
+	}
+
+
+	public void setCompany_name(String company_name) {
+		this.company_name = company_name;
+	}
+
 
 	public String getMobile_no() {
 		return mobile_no;
@@ -130,5 +159,4 @@ private String mobile_no;
 				+ ", location=" + location + ", salary=" + salary + ", job_type=" + job_type + ", experience_required="
 				+ experience_required + ", mobile_no=" + mobile_no + "]";
 	}
-
 }

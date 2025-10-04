@@ -70,7 +70,6 @@ public class ResumeDaoImpl implements IResumeDao {
         }
     }
 
-    // ✅ Get resume by user ID
     @Override
     public Resume getResumeByUserId(String userId) {
         String sql = "SELECT * FROM resume WHERE user_id=?";
@@ -87,7 +86,7 @@ public class ResumeDaoImpl implements IResumeDao {
         return null;
     }
 
-    // ✅ Get resume by resume ID
+    
     @Override
     public Resume getResumeById(String resumeId) {
         String sql = "SELECT * FROM resume WHERE resume_id=?";
@@ -159,6 +158,8 @@ public class ResumeDaoImpl implements IResumeDao {
     }
 
     // ✅ Update resume status (active/inactive)
+    
+    
     @Override
     public Boolean updateResumeStatus(String resumeId, Boolean status) {
         String sql = "UPDATE resume SET status=? WHERE resume_id=?";
@@ -174,6 +175,8 @@ public class ResumeDaoImpl implements IResumeDao {
     }
 
     // ✅ Get total count of resumes
+    
+    
     @Override
     public Integer getResumesCount() {
         String sql = "SELECT COUNT(*) FROM resume";
@@ -190,6 +193,7 @@ public class ResumeDaoImpl implements IResumeDao {
     }
 
     // ✅ Get recent resumes (limit)
+    
     @Override
     public List<Resume> getRecentResumes(int limit) {
         List<Resume> list = new ArrayList<>();
@@ -208,6 +212,7 @@ public class ResumeDaoImpl implements IResumeDao {
     }
 
     // 🔹 Helper method: map ResultSet → Resume object
+    
     private Resume extractResume(ResultSet rs) throws SQLException {
         Resume r = new Resume();
         r.setResume_id(rs.getString("resume_id"));

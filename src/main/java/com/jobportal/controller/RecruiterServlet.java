@@ -3,8 +3,11 @@ package com.jobportal.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.jobportal.model.Application;
 import com.jobportal.model.Job;
+import com.jobportal.service.IApplicationService;
 import com.jobportal.service.IJobService;
+import com.jobportal.service.impl.ApplicationServiceImpl;
 import com.jobportal.service.impl.JobServiceImpl;
 
 import jakarta.servlet.ServletException;
@@ -19,11 +22,13 @@ public class RecruiterServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private IJobService jobService;
+    private IApplicationService applicationService;
 
     @Override
     public void init() throws ServletException {
         super.init();
         jobService = new JobServiceImpl();
+        applicationService= new ApplicationServiceImpl();
     }
 
     @Override
@@ -66,13 +71,51 @@ public class RecruiterServlet extends HttpServlet {
             case "managejob":
                 jobList(request, response);
                 break;
+            case "viewapplications" :
+            	viewapplications(request,response);
+            	break;
+            
             default:
                 jobList(request, response);
                 break;
         }
     }
 
-    private void handleEdit(HttpServletRequest request, HttpServletResponse response)
+    
+    private void viewapplications(HttpServletRequest request, HttpServletResponse response) {
+        try {
+        	
+            HttpSession session = request.getSession();            
+            String recruiterId = (String) session.getAttribute("user_id");
+     
+            System.out.println(recruiterId);
+            
+            if (recruiterId == null)
+            {
+                response.sendRedirect("./auth/login.jsp");
+                return;
+            }
+
+            List<Application> applications = applicationService.getApplicationsByUser(recruiterId);
+
+            request.setAttribute("applications", applications);
+            
+            request.getRequestDispatcher("viewapplications.jsp").forward(request, response);
+
+        }
+        catch (Exception e) 
+        {
+            e.printStackTrace();
+            try {
+                response.sendRedirect("error.jsp");  // to show error
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+    }
+
+
+	private void handleEdit(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String jobId = request.getParameter("job_id");
         System.out.println("Edit action for job ID: " + jobId);

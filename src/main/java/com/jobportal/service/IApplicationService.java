@@ -17,5 +17,7 @@ public interface IApplicationService {
 	Application getApplicationById(String applicationId);
 
 	boolean withdrawApplication(String applicationId);
+	
+	String getCompanyIdByJobId(String job_id);
 
 }

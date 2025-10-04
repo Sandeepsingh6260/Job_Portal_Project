@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 public class Auditable {
 	private Timestamp created_at;
 	private Timestamp updated_at;
-	private Boolean status;
+	private String status;
 	private  Boolean isDeleted;
 	
 	public Auditable() {
@@ -13,7 +13,7 @@ public class Auditable {
 	}
 	
 	
-	public Auditable(Timestamp created_at, Timestamp updated_at, Boolean status, Boolean isDeleted) {
+	public Auditable(Timestamp created_at, Timestamp updated_at, String status, Boolean isDeleted) {
 		super();
 		this.created_at = created_at;
 		this.updated_at = updated_at;
@@ -38,11 +38,11 @@ public class Auditable {
 		this.updated_at = updated_at;
 	}
 
-	public Boolean getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(Boolean status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

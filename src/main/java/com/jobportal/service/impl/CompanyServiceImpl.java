@@ -7,6 +7,7 @@ import com.jobportal.service.ICompanyService;
 
 public class CompanyServiceImpl implements ICompanyService {
 	public ICompanyDao companyDao;
+	
 	public CompanyServiceImpl() {
 		super();
 		companyDao=new CompnayDaoImpl();

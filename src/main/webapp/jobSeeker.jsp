@@ -277,9 +277,8 @@ body {
 				</a>
 				<hr
 					style="border-color: rgba(255, 255, 255, 0.1); margin: 15px 20px;">
-				<a href="AuthServlet?action=logout"> <i
-					class="fas fa-sign-out-alt"></i> Logout
-				</a>
+				<a href="JobSeekerServlet?action=logout">
+				 <i class="fas fa-sign-out-alt"></i> Logout </a>
 			</div>
 		</div>
 
@@ -381,6 +380,7 @@ body {
 
 			<!-- Main Content Area -->
 			<div class="row mt-4">
+			
 				<!-- Resume Status -->
 				<div class="col-md-6">
 					<div class="profile-section">
@@ -445,10 +445,11 @@ body {
 							<a href="JobSeekerServlet?action=viewJobs"
 								class="btn btn-outline-primary"> <i
 								class="fas fa-search me-2"></i>Browse Jobs
+								
 							</a> <a href="JobSeekerServlet?action=viewApplications"
-								class="btn btn-outline-success"> <i class="fas fa-list me-2"></i>View
-								Applications
-							</a>
+								class="btn btn-outline-success">
+								 <i class="fas fa-list me-2"></i>View	Applications </a>
+								 
 							<button class="btn btn-outline-info" data-bs-toggle="modal"
 								data-bs-target="#resumeModal">
 								<i class="fas fa-file-upload me-2"></i>
@@ -551,7 +552,6 @@ body {
 							String[] demoJobs = {"Senior Java Developer", "Frontend React Developer", "Full Stack Engineer"};
 							String[] demoCompanies = {"Tech Solutions Inc", "Digital Innovations LLC", "Software Crafters Ltd"};
 							String[] demoLocations = {"New York, NY", "San Francisco, CA", "Remote"};
-							
 							for (int i = 0; i < 3; i++) {
 						%>
 						<div class="job-card">
@@ -964,8 +964,8 @@ body {
 						</div>
 
 						<div class="mb-3">
-							<label for="experience_years" class="form-label">Years of
-								Experience *</label> <input type="number" class="form-control"
+							<label for="experience_years" class="form-label">Years of Experience *</label>
+								 <input type="number" class="form-control"
 								id="experience_years" name="experience_years" min="0" max="50"
 								value="<%=resume != null && resume.getExperience_years() > 0 ? resume.getExperience_years() : ""%>"
 								placeholder="Enter your total years of experience" required>

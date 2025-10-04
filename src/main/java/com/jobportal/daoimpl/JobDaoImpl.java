@@ -107,9 +107,17 @@ public class JobDaoImpl implements IJobDao {
     @Override
     public List<Job> getAllJobs() {
         List<Job> jobs = new ArrayList<>();
-        String sql = "SELECT * FROM job ORDER BY created_at DESC";
+
+        String sql = "SELECT j.*, c.company_name " +
+                     "FROM job j " +
+                     "JOIN users u ON j.user_id = u.user_id " +
+                     "JOIN company c ON u.company_id = c.company_id " +
+                     "WHERE j.isDeleted = FALSE " +
+                     "ORDER BY j.created_at DESC";
+
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
                 Job job = new Job();
                 job.setId(rs.getString("job_id"));
@@ -121,14 +129,22 @@ public class JobDaoImpl implements IJobDao {
                 job.setMobile_no(rs.getString("mobile_no"));
                 job.setExperience_required(rs.getString("experience_required"));
                 job.setJob_type(rs.getString("job_type"));
+
+                
+                job.setCompany_name(rs.getString("company_name"));
+
                 jobs.add(job);
             }
-            System.out.println("------------------->>>   h"+jobs);
-        } catch (SQLException e) {
+
+            System.out.println("getAllJobs---- fetched " + jobs.size() + " jobs");
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
+
         return jobs;
     }
+
 
     	 public boolean jobpost(Job job) {
     	        String sql = "INSERT INTO job (job_id, title, description, user_id, location, salary, mobile_no, experience_required, job_type, created_at, updated_at, status) "

@@ -9,6 +9,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
 @SuppressWarnings("unchecked")
+
 public class CloudinaryUtil {
 
     private static Cloudinary cloudinary;
@@ -27,15 +28,16 @@ public class CloudinaryUtil {
         }
     }
 
-    // ✅ Get Cloudinary instance
+    
+    
     public static Cloudinary getCloudinary() {
         return cloudinary;
     }
 
+    
     public static Map uploadFile(InputStream fileInputStream, String folder, String publicId) throws IOException {
         if (cloudinary == null) throw new IOException("Cloudinary not initialized");
 
-        // Convert InputStream to byte[]
         byte[] fileBytes = fileInputStream.readAllBytes();
 
         if (publicId == null || publicId.isEmpty()) {
@@ -43,6 +45,7 @@ public class CloudinaryUtil {
         }
 
         // ✅ Always upload resumes as RAW (PDF, DOCX)
+        
         return cloudinary.uploader().upload(
             fileBytes,
             ObjectUtils.asMap(
@@ -57,8 +60,7 @@ public class CloudinaryUtil {
         );
     }
 
-
-    // ✅ Extract publicId from Cloudinary URL
+    
     public static String extractPublicIdFromUrl(String url) {
         if (url == null || url.isEmpty()) return null;
         try {

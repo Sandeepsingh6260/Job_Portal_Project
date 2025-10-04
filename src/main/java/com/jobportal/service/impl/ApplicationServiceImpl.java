@@ -2,10 +2,19 @@ package com.jobportal.service.impl;
 
 import java.util.List;
 
+import com.jobportal.dao.IApplicationDao;
+import com.jobportal.daoimpl.ApplicationDaoImpl;
 import com.jobportal.model.Application;
 import com.jobportal.service.IApplicationService;
 
 public class ApplicationServiceImpl implements IApplicationService {
+
+		public IApplicationDao applicationDao;
+		
+		public ApplicationServiceImpl() {
+			super();
+			applicationDao =new ApplicationDaoImpl();
+		}
 
 	@Override
 	public List<String> getAppliedJobIds(String user_id) {
@@ -15,8 +24,8 @@ public class ApplicationServiceImpl implements IApplicationService {
 
 	@Override
 	public List<Application> getApplicationsByUser(String user_id) {
-		// TODO Auto-generated method stub
-		return null;
+	
+		return applicationDao.getApplicationsById(user_id);
 	}
 
 	@Override
@@ -27,8 +36,7 @@ public class ApplicationServiceImpl implements IApplicationService {
 
 	@Override
 	public boolean applyForJob(Application application) {
-		// TODO Auto-generated method stub
-		return false;
+		return applicationDao.applyJob(application);
 	}
 
 	@Override
@@ -41,6 +49,11 @@ public class ApplicationServiceImpl implements IApplicationService {
 	public boolean withdrawApplication(String applicationId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public String getCompanyIdByJobId(String job_id) {
+		return applicationDao.getIdByjobId(job_id);
 	}
 
 }
