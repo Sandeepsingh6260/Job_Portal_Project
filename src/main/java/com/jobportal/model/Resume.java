@@ -12,7 +12,8 @@ public class Resume {
     private Timestamp created_at;
     private Timestamp updated_at;
 
-    // Getters and Setters (Fixed)
+   
+    
     public String getResume_id() {
         return resume_id;
     }

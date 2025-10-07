@@ -3,6 +3,7 @@ package com.jobportal.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.jobportal.enums.StatusType;
 import com.jobportal.model.Application;
 import com.jobportal.model.Job;
 import com.jobportal.service.IApplicationService;
@@ -74,6 +75,9 @@ public class RecruiterServlet extends HttpServlet {
             case "viewapplications" :
             	viewapplications(request,response);
             	break;
+            case "manageapplication" :
+            	manageApplication(request,response);
+            	break;
             
             default:
                 jobList(request, response);
@@ -81,6 +85,12 @@ public class RecruiterServlet extends HttpServlet {
         }
     }
 
+    private void manageApplication(HttpServletRequest request, HttpServletResponse response)
+    {
+    	StatusType type = StatusType.valueOf(request.getParameter("type").toUpperCase());
+    	String appId = request.getParameter("applicationId");
+    	System.out.println("---------------->>>> "+type+"    "+appId);
+    }
     
     private void viewapplications(HttpServletRequest request, HttpServletResponse response) {
         try {

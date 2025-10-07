@@ -86,10 +86,13 @@ public class ApplicationDaoImpl implements IApplicationDao {
 
 	    sql = "SELECT a.application_id, a.job_id, j.title AS job_title, "
 	        + "u.user_id AS applicant_id, u.user_name AS applicant_name, u.user_email AS applicant_email, "
-	        + "a.status, a.isDeleted, a.created_at "
+	        + "a.status, a.isDeleted, a.created_at, "
+	        + "r.experience_years, r.skills, r.file_path, "
+	        + "u.location " 
 	        + "FROM application a "
 	        + "JOIN job j ON a.job_id = j.job_id "
 	        + "JOIN users u ON a.user_id = u.user_id "
+	        + "LEFT JOIN resume r ON a.user_id = r.user_id " 
 	        + "WHERE j.user_id = ? AND a.isDeleted = false "
 	        + "ORDER BY a.created_at DESC";
 
@@ -109,9 +112,18 @@ public class ApplicationDaoImpl implements IApplicationDao {
 	            app.setApplicantEmail(rs.getString("applicant_email"));
 	            app.setStatus(rs.getString("status"));
 	            app.setDeleted(rs.getBoolean("isDeleted"));
+	            app.setExperienceYears(rs.getString("experience_years"));
+	            app.setSkills(rs.getString("skills"));
+	            app.setResumeLink(rs.getString("file_path"));
+                app.setLocation(rs.getString("location"));
 
+	            
 	            applications.add(app);
+	            
+	            System.out.println("Application found: " + app.getApplicantName() + " - " + app.getJobTitle());
 	        }
+
+	        System.out.println("Total applications found: " + applications.size());
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -120,4 +132,5 @@ public class ApplicationDaoImpl implements IApplicationDao {
 	    return applications;
 	}
 
+	
 }
