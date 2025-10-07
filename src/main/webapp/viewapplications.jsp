@@ -658,7 +658,6 @@ to {
 							</span>
 						</div>
 					</div>
-
 					<!-- Documents -->
 					<div class="detail-section">
 						<h4 class="section-title">
