@@ -133,6 +133,7 @@ public class ApplicationDaoImpl implements IApplicationDao {
 	    return applications;
 	}
 
+
 	@Override
 	public boolean updateApplicationStatus(String applicationId, StatusType status) {
 	    boolean isUpdated = false;
@@ -154,5 +155,4 @@ public class ApplicationDaoImpl implements IApplicationDao {
 	    }
 	    return isUpdated;
 	}
-
 }

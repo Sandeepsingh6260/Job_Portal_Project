@@ -118,8 +118,7 @@ public class RecruiterServlet extends HttpServlet {
           }
     }
 
-    
-    
+
     private void viewApplications(HttpServletRequest request, HttpServletResponse response) 
     {
         try {

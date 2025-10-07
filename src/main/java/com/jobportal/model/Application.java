@@ -19,7 +19,6 @@ public class Application extends Auditable {
 		private String ExperienceYears;
 		private String Skills;
 		private String Location;
-		
 
 	public Application(String id, String user_id, String job_id, String company_id, boolean isDeleted,
 			StatusType statusType, String jobTitle, String applicantId, String applicantName, String applicantEmail,
