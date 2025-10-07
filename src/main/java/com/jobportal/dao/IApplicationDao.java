@@ -2,6 +2,7 @@ package com.jobportal.dao;
 
 import java.util.List;
 
+import com.jobportal.enums.StatusType;
 import com.jobportal.model.Application;
 
 public interface IApplicationDao {
@@ -10,5 +11,7 @@ public interface IApplicationDao {
 	String getIdByjobId(String job_id);
 	
 	public List<Application> getApplicationsById(String recruiterId);
+	boolean updateApplicationStatus(String applicationId, StatusType status);
+	
 	
 }

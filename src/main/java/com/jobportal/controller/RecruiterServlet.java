@@ -3,6 +3,7 @@ package com.jobportal.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.jobportal.enums.StatusType;
 import com.jobportal.model.Application;
 import com.jobportal.model.Job;
 import com.jobportal.service.IApplicationService;
@@ -51,6 +52,7 @@ public class RecruiterServlet extends HttpServlet {
         System.out.println("Action received: " + action);
 
         if (action == null) {
+        	    System.out.println("action null");
             jobList(request, response);
             return;
         }
@@ -59,20 +61,29 @@ public class RecruiterServlet extends HttpServlet {
             case "edit":
                 handleEdit(request, response);
                 break;
+                
             case "delete":
                 handleDelete(request, response);
                 break;
+                
             case "update":
                 handleUpdate(request, response);
                 break;
+                
             case "jobpost":
                 handlePostJob(request, response);
                 break;
+                
             case "managejob":
                 jobList(request, response);
                 break;
+                
             case "viewapplications" :
-            	viewapplications(request,response);
+            	viewApplications(request,response);
+            	break; 
+            	
+            case "manageapplication" :
+            	manageApplication(request,response);
             	break;
             
             default:
@@ -81,10 +92,39 @@ public class RecruiterServlet extends HttpServlet {
         }
     }
 
+    private void manageApplication(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        
+        String appId = request.getParameter("applicationId");
+        String typeParam = request.getParameter("type");
+
+        if (appId == null || typeParam == null) {
+            response.sendRedirect("viewApplications.jsp?error=Invalid+Request");
+            return;
+        }
+
+        StatusType type = StatusType.valueOf(typeParam.toUpperCase());
+        
+        System.out.println("Updating status of Application ID: " + appId + " to " + type);
+        
+        boolean isUpdated = applicationService.updateApplicationStatus(appId, type);
+
+        if (isUpdated) 
+        {
+            response.sendRedirect("RecruiterServlet?action=viewApplications&msg=Status+Updated+Successfully");
+        } 
+        else {
+            response.sendRedirect("RecruiterServlet?action=viewApplications&error=Failed+to+Update+Status");
+          }
+    }
+
     
-    private void viewapplications(HttpServletRequest request, HttpServletResponse response) {
+    
+    private void viewApplications(HttpServletRequest request, HttpServletResponse response) 
+    {
         try {
-        	
+        	   System.out.println("view application method call");
+        	   
             HttpSession session = request.getSession();            
             String recruiterId = (String) session.getAttribute("user_id");
      
@@ -107,7 +147,7 @@ public class RecruiterServlet extends HttpServlet {
         {
             e.printStackTrace();
             try {
-                response.sendRedirect("error.jsp");  // to show error
+                response.sendRedirect("error.jsp"); 
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -115,6 +155,7 @@ public class RecruiterServlet extends HttpServlet {
     }
 
 
+    
 	private void handleEdit(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String jobId = request.getParameter("job_id");
@@ -127,6 +168,7 @@ public class RecruiterServlet extends HttpServlet {
         jobList(request, response);
     }
 
+	
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -144,6 +186,7 @@ public class RecruiterServlet extends HttpServlet {
         response.sendRedirect("RecruiterServlet?action=managejob");
     }
 
+    
     
     private void handleUpdate(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -174,6 +217,7 @@ public class RecruiterServlet extends HttpServlet {
         }       
         response.sendRedirect("RecruiterServlet?action=managejob");
     }
+    
 
     private void handlePostJob(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -223,7 +267,8 @@ public class RecruiterServlet extends HttpServlet {
     }
 
     private void jobList(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException 
+    {
         System.out.println("jobList method called");
         
         int currentPage = 1;

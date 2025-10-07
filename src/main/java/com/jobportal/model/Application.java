@@ -1,20 +1,47 @@
 package com.jobportal.model;
 
 import com.jobportal.audit.Auditable;
+
 import com.jobportal.enums.StatusType;
 
 public class Application extends Auditable {
-	private String id;
-	private String user_id;
-	private String job_id;
-	private String company_id;
-	private boolean isDeleted;
-	private StatusType statusType ;
-	private String JobTitle;
-	private String ApplicantId;
-	private String ApplicantName;
-	private String ApplicantEmail;
+		private String id;
+		private String user_id;
+		private String job_id;
+		private String company_id;
+		private boolean isDeleted;
+		private StatusType statusType ;
+		private String JobTitle;
+		private String ApplicantId;
+		private String ApplicantName;
+		private String ApplicantEmail;
+		private String ResumeLink;
+		private String ExperienceYears;
+		private String Skills;
+		private String Location;
+		
+
+	public Application(String id, String user_id, String job_id, String company_id, boolean isDeleted,
+			StatusType statusType, String jobTitle, String applicantId, String applicantName, String applicantEmail,
+			String resumeLink, String experienceYears, String skills, String location) {
+		super();
+		this.id = id;
+		this.user_id = user_id;
+		this.job_id = job_id;
+		this.company_id = company_id;
+		this.isDeleted = isDeleted;
+		this.statusType = statusType;
+		JobTitle = jobTitle;
+		ApplicantId = applicantId;
+		ApplicantName = applicantName;
+		ApplicantEmail = applicantEmail;
+		ResumeLink = resumeLink;
+		ExperienceYears = experienceYears;
+		Skills = skills;
+		Location = location;
 	
+	}
+
 	public Application() {
 		super();
 	}
@@ -47,7 +74,40 @@ public class Application extends Auditable {
 		ApplicantEmail = applicantEmail;
 	}
 
+
 	
+	
+	public String getExperienceYears() {
+		return ExperienceYears;
+	}
+
+	public void setExperienceYears(String experienceYears) {
+		ExperienceYears = experienceYears;
+	}
+
+	public String getSkills() {
+		return Skills;
+	}
+
+	public void setSkills(String skills) {
+		Skills = skills;
+	}
+
+	public String getLocation() {
+		return Location;
+	}
+
+	public void setLocation(String location) {
+		Location = location;
+	}
+
+	public String getResumeLink() {
+		return ResumeLink;
+	}
+
+	public void setResumeLink(String resumeLink) {
+		ResumeLink = resumeLink;
+	}
 	
 	public String getApplicantId() {
 		return ApplicantId;
@@ -132,7 +192,11 @@ public class Application extends Auditable {
 	@Override
 	public String toString() {
 		return "Application [id=" + id + ", user_id=" + user_id + ", job_id=" + job_id + ", company_id=" + company_id
-				+ ", isDeleted=" + isDeleted + ", statusType=" + statusType + "]";
+				+ ", isDeleted=" + isDeleted + ", statusType=" + statusType + ", JobTitle=" + JobTitle
+				+ ", ApplicantId=" + ApplicantId + ", ApplicantName=" + ApplicantName + ", ApplicantEmail="
+				+ ApplicantEmail + ", ResumeLink=" + ResumeLink + ", ExperienceYears=" + ExperienceYears + ", Skills="
+				+ Skills + ", Location=" + Location + "]";
 	}
 
+	
 }

@@ -2,6 +2,7 @@ package com.jobportal.service;
 
 import java.util.List;
 
+import com.jobportal.enums.StatusType;
 import com.jobportal.model.Application;
 
 public interface IApplicationService {
@@ -19,5 +20,7 @@ public interface IApplicationService {
 	boolean withdrawApplication(String applicationId);
 	
 	String getCompanyIdByJobId(String job_id);
+
+	boolean updateApplicationStatus(String appId, StatusType type);
 
 }

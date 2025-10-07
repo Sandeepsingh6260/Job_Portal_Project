@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jobportal.dao.IApplicationDao;
 import com.jobportal.daoimpl.ApplicationDaoImpl;
+import com.jobportal.enums.StatusType;
 import com.jobportal.model.Application;
 import com.jobportal.service.IApplicationService;
 
@@ -54,6 +55,12 @@ public class ApplicationServiceImpl implements IApplicationService {
 	@Override
 	public String getCompanyIdByJobId(String job_id) {
 		return applicationDao.getIdByjobId(job_id);
+	}
+
+	@Override
+	public boolean updateApplicationStatus(String applicationId, StatusType  status)
+	{
+		return applicationDao.updateApplicationStatus(applicationId, status);
 	}
 
 }

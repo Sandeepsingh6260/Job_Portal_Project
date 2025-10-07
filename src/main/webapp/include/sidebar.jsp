@@ -62,8 +62,7 @@
 							<li><a href="./RecruiterServlet?action=viewApplications">
 									<span class="sub-item">View Applications</span>
 							</a></li>
-
-							<li><a href="shortlist-candidates.jsp"> <span
+							<li><a href="./RecruiterServlet?action=manageApplication"> <span
 									class="sub-item">Shortlist Candidates</span>
 							</a></li>
 						</ul>
