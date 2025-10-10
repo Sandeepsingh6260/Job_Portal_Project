@@ -36,5 +36,9 @@ public class JobServiceImpl implements IJobService {
 		return jobdao.updateJob(job);
 	}
 
+	@Override
+    public List<Job> searchJobs(String keyword, String userId) {
+        return jobdao.searchJobs(keyword, userId);
+    }
 	
 }

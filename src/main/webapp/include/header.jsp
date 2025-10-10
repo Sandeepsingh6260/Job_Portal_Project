@@ -37,10 +37,8 @@
                 <!-- Search Bar -->
                 <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
                     <div class="input-group">
-                        <div class="input-group-prepend">
-                            <button type="submit" class="btn btn-search pe-1"><i class="fa fa-search search-icon"></i></button>
-                        </div>
-                        <input type="text" placeholder="Search ..." class="form-control">
+                       
+                       
                     </div>
                 </nav>
 
@@ -82,10 +80,9 @@
                                 </li>
                                 <li>    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="./myprofile.jsp">My Profile</a>
-                                    <a class="dropdown-item" href="#">My Balance</a>
-                                    <a class="dropdown-item" href="#">Inbox</a>
+                                 
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="settings.jsp">Account Setting</a>
+                                  
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="AuthenticationServlet?action=logout">Logout</a>
                                 </li>

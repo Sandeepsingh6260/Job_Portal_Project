@@ -48,12 +48,10 @@ public class AuthenticationServlet extends HttpServlet {
                 break;
             }
             case "signup": {
-                // Just redirect to signup page, don't process signup in GET
                 response.sendRedirect("auth/Signup.jsp");
                 break;
             }
             default: {
-                // Default redirect to login page
                 response.sendRedirect("auth/login.jsp");
                 break;
             }
@@ -328,6 +326,10 @@ public class AuthenticationServlet extends HttpServlet {
 
         String email = request.getParameter("user_email");
         String password = request.getParameter("user_password");
+        
+        
+        System.out.println("user_email-->"+email+"user_password "+password);
+        
         boolean hasError = false;
 
         if (email == null || email.isBlank()) {
@@ -348,8 +350,10 @@ public class AuthenticationServlet extends HttpServlet {
 
         User user = userService.login(email);
 
-        if (user != null) {
-            // Check password first
+        System.out.println("user-->"+user);
+        
+        if (user != null)
+        {
             if (!encoder.matches(password, user.getUser_password())) {
                 session.setAttribute("passwordInvalidError", AppConstant.INVALID_PASSWORD);
                 session.setAttribute("user_email_val", email);
@@ -358,11 +362,13 @@ public class AuthenticationServlet extends HttpServlet {
             }
 
             // Set session attributes
+            
             session.setAttribute("user", user);
             session.setAttribute("user_id", user.getUser_id());
             session.setAttribute("session", user);
 
             // Get company data for recruiters
+            
             if (user.getUser_role() == RoleType.RECRUITER && user.getCompany_id() != null) {
                 Company company = companyService.getCompanyById(user.getCompany_id());
                 session.setAttribute("companySession", company);
@@ -370,10 +376,10 @@ public class AuthenticationServlet extends HttpServlet {
 
             System.out.println("Login successful: " + user);
             
-            // Redirect based on role - FIXED: Pass request parameter
             redirectBasedOnRole(user.getUser_role(), response, request);
             
-        } else {
+        }
+        else {
             session.setAttribute("loginError", "Invalid Email or Password!");
             response.sendRedirect("auth/login.jsp");
         }
@@ -387,10 +393,11 @@ public class AuthenticationServlet extends HttpServlet {
         response.sendRedirect("auth/login.jsp");
     }
     
-    // FIXED: Added HttpServletRequest parameter to access session
     private void redirectBasedOnRole(RoleType role, HttpServletResponse response, HttpServletRequest request) throws IOException {
         System.out.println("redirect role enter---------------> ");
-        
+      
+        System.out.println(role);
+
         switch (role) {
             case JOB_SEEKER:
                 response.sendRedirect("JobSeekerServlet?action=viewDashboard");
@@ -401,19 +408,38 @@ public class AuthenticationServlet extends HttpServlet {
                 User user = (User) session.getAttribute("user");
                 
                 // Ensure company data is loaded for recruiters 
-                
                 if (user != null && user.getCompany_id() != null) {
                     Company company = companyService.getCompanyById(user.getCompany_id());
                     session.setAttribute("companySession", company);
                 }
                 response.sendRedirect("Recruiter.jsp");
                 break;
+                
+            case ADMIN:
+                HttpSession adminSession = request.getSession();             
+                User adminUser = (User) adminSession.getAttribute("user");
+                
+                if (adminUser != null)
+                {
+                    adminSession.setAttribute("adminUser", adminUser.getUser_email());
+                    adminSession.setAttribute("adminRole", "administrator");
+                    adminSession.setMaxInactiveInterval(30 * 60); // 30 minutes                            
+                    response.sendRedirect("AdminServlet?action=viewdashboard");
+                }
+                else 
+                {
+                    response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
+                }
+                break;
+
+
             default:
                 response.sendRedirect("auth/login.jsp");
                 break;
         }
     }
     
+
     private void clearSessionAttributes(HttpSession session) {
         // Clear error attributes
         session.removeAttribute("nameError");

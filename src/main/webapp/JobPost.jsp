@@ -1,34 +1,62 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.jobportal.model.User"%>
+<%@ page import="com.jobportal.model.Company"%>
+<%
+User user = (User) session.getAttribute("session");
+if (user == null) {
+	response.sendRedirect("auth/login.jsp");
+	return;
+}
+%>
+<%
+Company company = (Company) session.getAttribute("companySession");
+if (company == null) {
+	response.sendRedirect("auth/login.jsp");
+	return;
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Post Job | Recruiter</title>
+<jsp:include page="./include/head.jsp" />
 <style>
     body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
         background: #f4f7fb;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
     }
 
+    .main-content {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Changed from center to flex-start */
+        padding: 10px 20px; /* Reduced top padding */
+        margin-left: 250px; /* Adjust based on sidebar width */
+        padding-top: 20px; /* Added specific top padding */
+    }
 
     h2 {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 0;
+        margin-bottom: 20px;
         color: #333;
     }
     
-
     .container {
         width: 450px;
-        margin: 30px auto;
         background: #fff;
         padding: 25px 30px;
         border-radius: 10px;
         box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+        margin-top: 10px; /* Reduced margin top */
     }
-
 
     label {
         display: block;
@@ -47,6 +75,7 @@
         font-size: 14px;
         background: #fafafa;
         transition: border-color 0.3s ease;
+        box-sizing: border-box;
     }
 
     input[type="text"]:focus, textarea:focus, select:focus {
@@ -107,81 +136,87 @@
 </style>
 </head>
 <body>
-    <h2>Post a Job</h2>
+   <div class="wrapper">
+		<jsp:include page="./include/sidebar.jsp" />
+		<jsp:include page="./include/header.jsp" />
+   
+    <div class="main-content">
+        <div class="container">
+            <!-- Success & Error messages -->
+             <h2>Post a Job</h2>
+            <%
+                if (session.getAttribute("successMsg") != null) {
+            %>
+                <div class="success"><%= session.getAttribute("successMsg") %></div>
+            <%
+                    session.removeAttribute("successMsg");
+                }
+                if (session.getAttribute("errorMsg") != null) {
+            %>
+                <div class="error"><%= session.getAttribute("errorMsg") %></div>
+            <%
+                    session.removeAttribute("errorMsg");
+                }
+            %>
 
-    <div class="container">
-        <!-- Success & Error messages -->
-        <%
-            if (session.getAttribute("successMsg") != null) {
-        %>
-            <div class="success"><%= session.getAttribute("successMsg") %></div>
-        <%
-                session.removeAttribute("successMsg");
-            }
-            if (session.getAttribute("errorMsg") != null) {
-        %>
-            <div class="error"><%= session.getAttribute("errorMsg") %></div>
-        <%
-                session.removeAttribute("errorMsg");
-            }
-        %>
+            <form action="./RecruiterServlet" method="post">
+                <input type="hidden" name="action" value="jobpost" />
 
-        <form action="./RecruiterServlet" method="post">
-            <input type="hidden" name="action" value="jobpost" />
+                <!-- Job Title -->
+                <label>Job Title:</label>
+                <input type="text" name="title" 
+                       value="<%= session.getAttribute("title_val") != null ? session.getAttribute("title_val") : "" %>"/>
+                <div class="error"><%= session.getAttribute("titleError") != null ? session.getAttribute("titleError") : "" %></div>
 
-            <!-- Job Title -->
-            <label>Job Title:</label>
-            <input type="text" name="title" 
-                   value="<%= session.getAttribute("title_val") != null ? session.getAttribute("title_val") : "" %>"/>
-            <div class="error"><%= session.getAttribute("titleError") != null ? session.getAttribute("titleError") : "" %></div>
+                <!-- Description -->
+                <label>Description:</label>
+                <textarea name="description"><%= session.getAttribute("desc_val") != null ? session.getAttribute("desc_val") : "" %></textarea>
+                <div class="error"><%= session.getAttribute("descriptionError") != null ? session.getAttribute("descriptionError") : "" %></div>
 
-            <!-- Description -->
-            <label>Description:</label>
-            <textarea name="description"><%= session.getAttribute("desc_val") != null ? session.getAttribute("desc_val") : "" %></textarea>
-            <div class="error"><%= session.getAttribute("descriptionError") != null ? session.getAttribute("descriptionError") : "" %></div>
+                <!-- Location -->
+                <label>Location:</label>
+                <input type="text" name="location" 
+                       value="<%= session.getAttribute("loc_val") != null ? session.getAttribute("loc_val") : "" %>"/>
+                <div class="error"><%= session.getAttribute("locationError") != null ? session.getAttribute("locationError") : "" %></div>
 
-            <!-- Location -->
-            <label>Location:</label>
-            <input type="text" name="location" 
-                   value="<%= session.getAttribute("loc_val") != null ? session.getAttribute("loc_val") : "" %>"/>
-            <div class="error"><%= session.getAttribute("locationError") != null ? session.getAttribute("locationError") : "" %></div>
+                <!-- Salary -->
+                <label>Salary:</label>
+                <input type="text" name="salary" 
+                       value="<%= session.getAttribute("salary_val") != null ? session.getAttribute("salary_val") : "" %>"/>
+                <div class="error"><%= session.getAttribute("salaryError") != null ? session.getAttribute("salaryError") : "" %></div>
 
-            <!-- Salary -->
-            <label>Salary:</label>
-            <input type="text" name="salary" 
-                   value="<%= session.getAttribute("salary_val") != null ? session.getAttribute("salary_val") : "" %>"/>
-            <div class="error"><%= session.getAttribute("salaryError") != null ? session.getAttribute("salaryError") : "" %></div>
+                <!-- Experience -->
+                <label>Experience:</label>
+                <input type="text" name="experience_required" 
+                       value="<%= session.getAttribute("exp_val") != null ? session.getAttribute("exp_val") : "" %>"/>
+                <div class="error"><%= session.getAttribute("experienceError") != null ? session.getAttribute("experienceError") : "" %></div>
 
-            <!-- Experience -->
-            <label>Experience:</label>
-            <input type="text" name="experience_required" 
-                   value="<%= session.getAttribute("exp_val") != null ? session.getAttribute("exp_val") : "" %>"/>
-            <div class="error"><%= session.getAttribute("experienceError") != null ? session.getAttribute("experienceError") : "" %></div>
+                <!-- Job Type -->
+                <label>Job Type:</label>
+                <select name="job_type">
+                    <option value="">--Select--</option>
+                    <option value="Full-Time" <%= "Full-Time".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Full-Time</option>
+                    <option value="Part-Time" <%= "Part-Time".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Part-Time</option>
+                    <option value="Internship" <%= "Internship".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Internship</option>
+                    <option value="Contract" <%= "Contract".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Contract</option>
+                </select>
+                <div class="error"><%= session.getAttribute("jobTypeError") != null ? session.getAttribute("jobTypeError") : "" %></div>
 
-            <!-- Job Type -->
-            <label>Job Type:</label>
-            <select name="job_type">
-                <option value="">--Select--</option>
-                <option value="Full-Time" <%= "Full-Time".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Full-Time</option>
-                <option value="Part-Time" <%= "Part-Time".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Part-Time</option>
-                <option value="Internship" <%= "Internship".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Internship</option>
-                <option value="Contract" <%= "Contract".equals(session.getAttribute("job_type_val")) ? "selected" : "" %>>Contract</option>
-            </select>
-            <div class="error"><%= session.getAttribute("jobTypeError") != null ? session.getAttribute("jobTypeError") : "" %></div>
+                <!-- Mobile -->
+                <label>Mobile:</label>
+                <input type="text" name="mobile_no" 
+                       value="<%= session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : "" %>"/>
+                <div class="error"><%= session.getAttribute("mobileError") != null ? session.getAttribute("mobileError") : "" %></div>
 
-            <!-- Mobile -->
-            <label>Mobile:</label>
-            <input type="text" name="mobile_no" 
-                   value="<%= session.getAttribute("mobile_val") != null ? session.getAttribute("mobile_val") : "" %>"/>
-            <div class="error"><%= session.getAttribute("mobileError") != null ? session.getAttribute("mobileError") : "" %></div>
+                <button type="submit">Post Job</button>
+            </form>
 
-            <button type="submit">Post Job</button>
-        </form>
-
-        <div class="back-link">
-            <a href="Recruiter.jsp">← Back to Dashboard</a>
+            <div class="back-link">
+                <a href="Recruiter.jsp">← Back to Dashboard</a>
+            </div>
         </div>
     </div>
+
 
 <%
     // remove field-specific errors after displaying (to avoid showing again on refresh)
@@ -193,5 +228,8 @@
     session.removeAttribute("jobTypeError");
     session.removeAttribute("mobileError");
 %>
+<jsp:include page="./include/footer.jsp" />
+</div>
+	<jsp:include page="./include/scripts.jsp"></jsp:include>
 </body>
 </html>

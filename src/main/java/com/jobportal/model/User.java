@@ -12,12 +12,16 @@ public class User extends Auditable {
     private String location;  
     private RoleType user_role;
     private String company_id;
-    
+    private String Company_name;
+    private int Jobs_posted;
+    private boolean status;
+
     public User() {
 		super();
 	}
 
 	// Full constructor
+    
 	public User(String user_id, String user_name, String user_email, String user_password, String location,
 			 RoleType user_role, String company_id) {
 		super();
@@ -31,6 +35,63 @@ public class User extends Auditable {
 	}
 
 	
+
+	public User(String user_id, String user_name, String user_email, String user_password, String location,
+			RoleType user_role, String company_id, String company_name, int jobs_posted) {
+		super();
+		this.user_id = user_id;
+		this.user_name = user_name;
+		this.user_email = user_email;
+		this.user_password = user_password;
+		this.location = location;
+		this.user_role = user_role;
+		this.company_id = company_id;
+		Company_name = company_name;
+		Jobs_posted = jobs_posted;
+	}
+
+	
+	
+	
+	public User(String user_id, String user_name, String user_email, String user_password, String location,
+			RoleType user_role, String company_id, String company_name, int jobs_posted, boolean status) {
+		super();
+		this.user_id = user_id;
+		this.user_name = user_name;
+		this.user_email = user_email;
+		this.user_password = user_password;
+		this.location = location;
+		this.user_role = user_role;
+		this.company_id = company_id;
+		Company_name = company_name;
+		Jobs_posted = jobs_posted;
+		this.status = status;
+	}
+
+	
+	public boolean isStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+	public String getCompany_name() {
+		return Company_name;
+	}
+
+	public void setCompany_name(String company_name) {
+		Company_name = company_name;
+	}
+
+	public int getJobs_posted() {
+		return Jobs_posted;
+	}
+
+	public void setJobs_posted(int jobs_posted) {
+		Jobs_posted = jobs_posted;
+	}
 
 	public String getUser_id() {
 		return user_id;

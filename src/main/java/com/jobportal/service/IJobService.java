@@ -16,4 +16,5 @@ public interface IJobService {
 
 	boolean updateJob(Job job);
 
+	List<Job> searchJobs(String keyword, String userId);
 }

@@ -18,5 +18,5 @@ public interface IJobDao {
 
 	List<Job> getAllJobs();
 
-	
+	List<Job> searchJobs(String keyword, String userId);
 }

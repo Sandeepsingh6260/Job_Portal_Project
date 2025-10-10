@@ -45,6 +45,7 @@ body {
 	min-height: 100vh;
 }
 
+
 /* Main container */
 .main-content {
 	margin-left: 250px; /* Sidebar width */
@@ -56,13 +57,9 @@ body {
 	transition: var(--transition);
 }
 
-.profile-container {
-	margin-top: -1200px; /* ऊपर से थोड़ी दूरी, कम या ज्यादा कर सकते हैं */
-}
 
-.edit-form-container {
-	margin-top: -700px;
-}
+
+
 
 /* Profile Container */
 .profile-container {
@@ -659,7 +656,7 @@ function togglePassword(fieldId, button) {
     passwordField.setAttribute('type', type);
     
     // Toggle eye icon
-    button.innerHTML = type === 'password' ? '👁️' : '👁️‍🗨️';
+    button.innerHTML = type === 'password' ? '👁' : '👁‍🗨';
 }
 
 // Password validation
@@ -764,20 +761,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					<h2 class="profile-name"><%=user.getUser_name()%></h2>
 					<p class="profile-role"><%=user.getUser_role()%></p>
 
-					<div class="profile-stats">
-						<div class="stat-item">
-							<span class="stat-value" data-target="24">0</span> <span
-								class="stat-label">Applications</span>
-						</div>
-						<div class="stat-item">
-							<span class="stat-value" data-target="12">0</span> <span
-								class="stat-label">Interviews</span>
-						</div>
-						<div class="stat-item">
-							<span class="stat-value" data-target="5">0</span> <span
-								class="stat-label">Offers</span>
-						</div>
-					</div>
+					
 
 					<button class="edit-profile-btn" onclick="showEditForm()">
 						Edit Profile</button>
@@ -906,7 +890,7 @@ document.addEventListener('DOMContentLoaded', function() {
 										<input type="password" class="form-input" id="oldPassword"
 											name="old_password" placeholder="Enter current password">
 										<button type="button" class="password-toggle"
-											onclick="togglePassword('oldPassword', this)">👁️</button>
+											onclick="togglePassword('oldPassword', this)">👁</button>
 									</div>
 									<%
 									if (session.getAttribute("passwordInvalidError") != null) {
@@ -926,7 +910,7 @@ document.addEventListener('DOMContentLoaded', function() {
 										<input type="password" class="form-input" id="newPassword"
 											name="new_password" placeholder="Enter new password">
 										<button type="button" class="password-toggle"
-											onclick="togglePassword('newPassword', this)">👁️</button>
+											onclick="togglePassword('newPassword', this)">👁</button>
 									</div>
 									<!-- New Password Error -->
 									<%
@@ -948,7 +932,7 @@ document.addEventListener('DOMContentLoaded', function() {
 											name="confirm_password" placeholder="Confirm new password"
 											onkeyup="validatePassword()">
 										<button type="button" class="password-toggle"
-											onclick="togglePassword('confirmPassword', this)">👁️</button>
+											onclick="togglePassword('confirmPassword', this)">👁</button>
 									</div>
 									<!-- Confirm Password Error -->
 									<%

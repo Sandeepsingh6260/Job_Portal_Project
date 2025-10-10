@@ -22,5 +22,9 @@ public interface IApplicationService {
 	String getCompanyIdByJobId(String job_id);
 
 	boolean updateApplicationStatus(String appId, StatusType type);
-
+	
+	List<Application> searchApplications(String keyword, String recruiterId);
+	 
+	 List<Application> searchApplicationsByStatus(String status, String recruiterId);
+	
 }

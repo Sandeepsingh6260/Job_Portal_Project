@@ -2,10 +2,7 @@
 	<div class="sidebar-logo">
 		<!-- Logo Header -->
 		<div class="logo-header" data-background-color="dark">
-			<a href="index.html" class="logo"> <img
-				src="assets/img/job-portal-logo.svg" alt="navbar brand"
-				class="navbar-brand" height="20">
-			</a>
+			
 			<div class="nav-toggle">
 				<button class="btn btn-toggle toggle-sidebar">
 					<i class="gg-menu-right"></i>
@@ -28,13 +25,7 @@
 						class="fas fa-home"></i>
 						<p>Dashboard</p> <span class="caret"></span>
 				</a>
-					<div class="collapse" id="dashboard">
-						<ul class="nav nav-collapse">
-							<li><a href="#"> <span class="sub-item">Recruiter
-										Overview</span>
-							</a></li>
-						</ul>
-					</div></li>
+					</li>
 				<li class="nav-section"><span class="sidebar-mini-icon">
 						<i class="fa fa-ellipsis-h"></i>
 				</span>
@@ -62,23 +53,10 @@
 							<li><a href="./RecruiterServlet?action=viewApplications">
 									<span class="sub-item">View Applications</span>
 							</a></li>
-							<li><a href="./RecruiterServlet?action=manageApplication"> <span
-									class="sub-item">Shortlist Candidates</span>
-							</a></li>
+							
 						</ul>
 					</div></li>
-				<li class="nav-item"><a href="candidates.jsp"> <i
-						class="fas fa-users"></i>
-						<p>Candidates</p>
-				</a></li>
-				<li class="nav-item"><a href="analytics.jsp"> <i
-						class="fas fa-chart-bar"></i>
-						<p>Analytics</p>
-				</a></li>
-				<li class="nav-item"><a href="settings.jsp"> <i
-						class="fas fa-cog"></i>
-						<p>Settings</p>
-				</a></li>
+				
 			</ul>
 		</div>
 	</div>

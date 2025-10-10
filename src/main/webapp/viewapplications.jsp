@@ -1,6 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, com.jobportal.model.Application"%>
+<%
+    List<Application> applications = (List<Application>) request.getAttribute("applications");
+    if (applications == null) {
+        applications = new ArrayList<>();
+    }
+    
+    // Search and filter variables
+    String searchKeyword = (String) request.getAttribute("searchKeyword");
+    String filterStatus = (String) request.getAttribute("filterStatus");
+    String searchType = (String) request.getAttribute("searchType");
+    Integer totalApplications = (Integer) request.getAttribute("totalApplications");
+    if (totalApplications == null) {
+        totalApplications = applications.size();
+    }
+    
+    // Status counts for filter badges
+    int pendingCount = 0, shortlistedCount = 0, rejectedCount = 0;
+    for (Application app : applications) {
+        String status = app.getStatus().toUpperCase();
+        switch (status) {
+            case "PENDING": pendingCount++; break;
+            case "SHORTLISTED": shortlistedCount++; break;
+            case "REJECTED": rejectedCount++; break;
+        }
+    }
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -113,6 +139,192 @@ body {
 	font-size: 0.9rem;
 }
 
+/* Search and Filter Section */
+.search-filter-section {
+	background: #f8f9fa;
+	padding: 1.5rem 2rem;
+	border-bottom: 1px solid #dee2e6;
+}
+
+.search-container {
+	display: grid;
+	grid-template-columns: 1fr auto auto auto;
+	gap: 1rem;
+	align-items: end;
+}
+
+.search-box {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.filter-box {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.search-label {
+	font-weight: 600;
+	color: var(--dark);
+	font-size: 0.9rem;
+}
+
+.search-input {
+	padding: 0.75rem 1rem;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	transition: all 0.3s ease;
+}
+
+.search-input:focus {
+	outline: none;
+	border-color: var(--secondary);
+	box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.filter-select {
+	padding: 0.75rem 1rem;
+	border: 2px solid #e9ecef;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	background: white;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+	outline: none;
+	border-color: var(--secondary);
+	box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.search-btn {
+	background: var(--success);
+	color: white;
+	border: none;
+	padding: 0.75rem 1.5rem;
+	border-radius: 8px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	height: fit-content;
+}
+
+.search-btn:hover {
+	background: #218838;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.clear-btn {
+	background: var(--gray);
+	color: white;
+	border: none;
+	padding: 0.75rem 1.5rem;
+	border-radius: 8px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	text-decoration: none;
+	height: fit-content;
+}
+
+.clear-btn:hover {
+	background: #5a6268;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Status Filter Badges */
+.status-filters {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1rem;
+	flex-wrap: wrap;
+}
+
+.status-filter-badge {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-decoration: none;
+}
+
+.status-filter-badge:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-all {
+	background: var(--secondary);
+	color: white;
+}
+
+.filter-pending {
+	background: #fff3cd;
+	color: #856404;
+}
+
+.filter-shortlisted {
+	background: #d1edff;
+	color: #004085;
+}
+
+.filter-rejected {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+.status-count {
+	background: rgba(0, 0, 0, 0.1);
+	padding: 0.2rem 0.5rem;
+	border-radius: 10px;
+	font-size: 0.7rem;
+}
+
+/* Search Results Info */
+.search-results-info {
+	background: #e3f2fd;
+	border-left: 4px solid var(--info);
+	padding: 1rem 1.5rem;
+	margin: 1rem 2rem;
+	border-radius: 8px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.search-results-text {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--dark);
+	font-weight: 500;
+}
+
+.search-keyword {
+	background: var(--info);
+	color: white;
+	padding: 0.2rem 0.6rem;
+	border-radius: 12px;
+	font-weight: 600;
+}
+
 /* Table */
 .table-container {
 	overflow-x: auto;
@@ -122,7 +334,7 @@ body {
 .applications-table {
 	width: 100%;
 	border-collapse: collapse;
-	min-width: 800px;
+	min-width: 700px;
 }
 
 .applications-table th {
@@ -273,17 +485,17 @@ body {
 	animation: modalSlideIn 0.3s ease-out;
 }
 
-@
-keyframes modalSlideIn {from { opacity:0;
-	transform: translateY(-50px) scale(0.9);
+@keyframes modalSlideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-50px) scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
 }
 
-to {
-	opacity: 1;
-	transform: translateY(0) scale(1);
-}
-
-}
 .modal-header {
 	background: linear-gradient(135deg, var(--secondary), var(--primary));
 	color: white;
@@ -398,12 +610,15 @@ to {
 }
 
 /* Responsive */
-@media ( max-width : 768px) {
+@media (max-width: 768px) {
 	.main-container {
 		margin: 1rem auto;
 	}
 	.page-title {
 		font-size: 2rem;
+	}
+	.search-container {
+		grid-template-columns: 1fr;
 	}
 	.action-buttons {
 		flex-direction: column;
@@ -424,6 +639,9 @@ to {
 		text-align: left;
 		margin-top: 0.3rem;
 	}
+	.status-filters {
+		justify-content: center;
+	}
 }
 </style>
 </head>
@@ -435,7 +653,7 @@ to {
 			<a href="#" class="logo"> <i class="fas fa-briefcase"></i>JobPortal
 			</a>
 			<div class="header-actions">
-				<a href="Recruiter.jsp" class="btn btn-back"> <i
+				<a href="./Recruiter.jsp" class="btn btn-back"> <i
 					class="fas fa-arrow-left"></i> Back to Dashboard
 				</a>
 			</div>
@@ -450,17 +668,84 @@ to {
 			<div class="card-header">
 				<div class="card-title">
 					<span>All Applications</span> <span class="applications-count">
-						<%
-						List<Application> applications = (List<Application>) request.getAttribute("applications");
-						if (applications != null) {
-							out.print(applications.size());
-						} else {
-							out.print(0);
-						}
-						%> Applications
+						<%= totalApplications %> Applications
 					</span>
 				</div>
 			</div>
+
+			<!-- Search and Filter Section -->
+			<div class="search-filter-section">
+				<!-- Search Form -->
+				<form action="RecruiterServlet" method="get" class="search-form" id="searchForm">
+					<div class="search-container">
+						<!-- Search by Keyword -->
+						<div class="search-box">
+							<label class="search-label">Search Applications</label>
+							<input type="text" class="search-input" name="keyword" 
+								placeholder="Search by candidate name, email, skills, location, or job title..." 
+								value="<%= searchKeyword != null ? searchKeyword : "" %>">
+							<input type="hidden" name="action" value="searchapplications">
+						</div>
+
+						<!-- Search Button -->
+						<div class="search-action">
+							<button type="submit" class="search-btn">
+								<i class="fas fa-search"></i> Search
+							</button>
+						</div>
+
+						<!-- Filter by Status -->
+						
+						<!-- Clear Button -->
+						<div class="clear-action">
+							<a href="RecruiterServlet?action=viewapplications" class="clear-btn">
+								<i class="fas fa-times"></i> Clear
+							</a>
+						</div>
+					</div>
+				</form>
+
+				<!-- Status Filter Badges -->
+				<div class="status-filters">
+					<a href="RecruiterServlet?action=viewapplications" class="status-filter-badge filter-all">
+						<i class="fas fa-layer-group"></i> All
+						<span class="status-count"><%= totalApplications %></span>
+					</a>
+					<a href="RecruiterServlet?action=filterapplications&status=PENDING" class="status-filter-badge filter-pending">
+						<i class="fas fa-clock"></i> Pending
+						<span class="status-count"><%= pendingCount %></span>
+					</a>
+					<a href="RecruiterServlet?action=filterapplications&status=SHORTLISTED" class="status-filter-badge filter-shortlisted">
+						<i class="fas fa-check-circle"></i> Shortlisted
+						<span class="status-count"><%= shortlistedCount %></span>
+					</a>
+					<a href="RecruiterServlet?action=filterapplications&status=REJECTED" class="status-filter-badge filter-rejected">
+						<i class="fas fa-times-circle"></i> Rejected
+						<span class="status-count"><%= rejectedCount %></span>
+					</a>
+				</div>
+			</div>
+
+			<!-- Search Results Info -->
+			<% if (searchKeyword != null && !searchKeyword.trim().isEmpty() || filterStatus != null && !"ALL".equals(filterStatus)) { %>
+				<div class="search-results-info">
+					<div class="search-results-text">
+						<i class="fas fa-info-circle"></i>
+						Showing results for:
+						<% if (searchKeyword != null && !searchKeyword.trim().isEmpty()) { %>
+							<span class="search-keyword">"<%= searchKeyword %>"</span>
+						<% } %>
+						<% if (filterStatus != null && !"ALL".equals(filterStatus)) { %>
+							<% if (searchKeyword != null && !searchKeyword.trim().isEmpty()) { %> and <% } %>
+							Status: <span class="search-keyword"><%= filterStatus %></span>
+						<% } %>
+						- Found <strong><%= totalApplications %></strong> application<%= totalApplications != 1 ? "s" : "" %>
+					</div>
+					<a href="RecruiterServlet?action=viewapplications" class="btn btn-sm btn-outline-info">
+						<i class="fas fa-times me-1"></i> Clear Filters
+					</a>
+				</div>
+			<% } %>
 
 			<div class="table-container">
 				<%
@@ -469,7 +754,6 @@ to {
 				<table class="applications-table">
 					<thead>
 						<tr>
-							<th>Application ID</th>
 							<th>Job Title</th>
 							<th>Applicant Name</th>
 							<th>Email</th>
@@ -484,7 +768,6 @@ to {
 							String statusClass = "status-" + app.getStatus().toLowerCase();
 						%>
 						<tr>
-							<td>#<%=app.getId()%></td>
 							<td><strong><%=app.getJobTitle()%></strong></td>
 							<td><%=app.getApplicantName()%></td>
 							<td><%=app.getApplicantEmail()%></td>
@@ -529,7 +812,6 @@ to {
 									%>
 								</div>
 							</td>
-
 						</tr>
 						<%
 						}
@@ -542,7 +824,28 @@ to {
 				<div class="no-data">
 					<i class="fas fa-inbox"></i>
 					<h3>No Applications Found</h3>
-					<p>There are no job applications to display at the moment.</p>
+					<p>
+						<%
+						if (searchKeyword != null && !searchKeyword.trim().isEmpty() || filterStatus != null && !"ALL".equals(filterStatus)) {
+						%>
+							No applications match your search criteria. Try adjusting your search terms or filters.
+						<%
+						} else {
+						%>
+							There are no job applications to display at the moment.
+						<%
+						}
+						%>
+					</p>
+					<%
+					if (searchKeyword != null && !searchKeyword.trim().isEmpty() || filterStatus != null && !"ALL".equals(filterStatus)) {
+					%>
+						<a href="RecruiterServlet?action=viewapplications" class="btn btn-primary mt-2">
+							<i class="fas fa-times me-1"></i> Clear Search & Filters
+						</a>
+					<%
+					}
+					%>
 				</div>
 				<%
 				}
@@ -596,7 +899,6 @@ to {
 							</span>
 							</span>
 						</div>
-
 						<div class="detail-item">
 							<span class="detail-label">Job ID:</span> <span
 								class="detail-value"><%=app.getJob_id()%></span>
@@ -678,7 +980,6 @@ to {
  %>
 							</span>
 						</div>
-
 					</div>
 				</div>
 			</div>
@@ -722,6 +1023,34 @@ to {
                 const modals = document.querySelectorAll('.modal');
                 modals.forEach(modal => {
                     modal.style.display = 'none';
+                });
+            }
+        });
+
+        // Auto-submit search form when Enter is pressed in search input
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('input[name="keyword"]');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.getElementById('searchForm').submit();
+                    }
+                });
+            }
+            
+            // Handle status filter change
+            const statusFilter = document.getElementById('statusFilter');
+            if (statusFilter) {
+                statusFilter.addEventListener('change', function() {
+                    // Change the action based on whether we're searching or filtering
+                    const keywordInput = document.querySelector('input[name="keyword"]');
+                    if (keywordInput && keywordInput.value.trim() !== '') {
+                        document.querySelector('input[name="action"]').value = 'searchapplications';
+                    } else {
+                        document.querySelector('input[name="action"]').value = 'filterapplications';
+                    }
+                    document.getElementById('searchForm').submit();
                 });
             }
         });

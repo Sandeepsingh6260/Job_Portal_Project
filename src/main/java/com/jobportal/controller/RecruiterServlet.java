@@ -2,10 +2,14 @@ package com.jobportal.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+import com.jobportal.dao.IApplicationDao;
+import com.jobportal.daoimpl.ApplicationDaoImpl;
 import com.jobportal.enums.StatusType;
 import com.jobportal.model.Application;
 import com.jobportal.model.Job;
+import com.jobportal.model.User;
 import com.jobportal.service.IApplicationService;
 import com.jobportal.service.IJobService;
 import com.jobportal.service.impl.ApplicationServiceImpl;
@@ -24,12 +28,14 @@ public class RecruiterServlet extends HttpServlet {
 
     private IJobService jobService;
     private IApplicationService applicationService;
+    private IApplicationDao applicationDao;
 
     @Override
     public void init() throws ServletException {
         super.init();
         jobService = new JobServiceImpl();
-        applicationService= new ApplicationServiceImpl();
+        applicationService = new ApplicationServiceImpl();
+        applicationDao = new ApplicationDaoImpl();
     }
 
     @Override
@@ -52,8 +58,8 @@ public class RecruiterServlet extends HttpServlet {
         System.out.println("Action received: " + action);
 
         if (action == null) {
-        	    System.out.println("action null");
-            jobList(request, response);
+            System.out.println("action null - redirecting to dashboard");
+            getDashboardCounts(request, response);
             return;
         }
 
@@ -78,19 +84,153 @@ public class RecruiterServlet extends HttpServlet {
                 jobList(request, response);
                 break;
                 
-            case "viewapplications" :
-            	viewApplications(request,response);
-            	break; 
-            	
-            case "manageapplication" :
-            	manageApplication(request,response);
-            	break;
-            
+            case "searchjobs":
+                searchJobs(request, response);
+                break;
+                
+            case "viewapplications":
+                viewApplications(request, response);
+                break; 
+                
+            case "searchapplications":
+                searchApplications(request, response);
+                break;
+                
+            case "filterapplications":
+                filterApplications(request, response);
+                break;
+                
+            case "manageapplication":
+                manageApplication(request, response);
+                break;
+                
+            case "dashboard":
+                getDashboardCounts(request, response);
+                break;
+                
             default:
-                jobList(request, response);
+                getDashboardCounts(request, response);
                 break;
         }
     }
+
+    // New search methods
+    private void searchJobs(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("searchJobs method called");
+        
+        HttpSession session = request.getSession();
+        String userId = (String) session.getAttribute("user_id");
+        
+        if (userId == null) {
+            response.sendRedirect("./auth/login.jsp");
+            return;
+        }
+        
+        String keyword = request.getParameter("keyword");
+        System.out.println("Search keyword for jobs: " + keyword);
+        
+        List<Job> jobs;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            jobs = jobService.searchJobs(keyword.trim(), userId);
+            request.setAttribute("searchKeyword", keyword);
+            request.setAttribute("searchType", "jobs");
+        } else {
+            jobs = jobService.getAllJobs();
+        }
+        
+        // Pagination
+        int currentPage = 1;
+        int recordsPerPage = 5;
+        if (request.getParameter("page") != null) {
+            try {
+                currentPage = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+                currentPage = 1;
+            }
+        }
+        
+        int startIndex = (currentPage - 1) * recordsPerPage;
+        int endIndex = Math.min(startIndex + recordsPerPage, jobs.size());
+        int totalPages = (int) Math.ceil(jobs.size() * 1.0 / recordsPerPage);
+        
+        startIndex = Math.max(0, Math.min(startIndex, jobs.size()));
+        endIndex = Math.max(startIndex, Math.min(endIndex, jobs.size()));
+        
+        List<Job> jobsPage = jobs.subList(startIndex, endIndex);
+        
+        request.setAttribute("jobs", jobsPage);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalJobs", jobs.size());
+        
+        request.getRequestDispatcher("ManageJobs.jsp").forward(request, response);
+    }
+    
+    
+    
+    private void searchApplications(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("searchApplications method called");
+        
+        HttpSession session = request.getSession();
+        String recruiterId = (String) session.getAttribute("user_id");
+        
+        if (recruiterId == null) {
+            response.sendRedirect("./auth/login.jsp");
+            return;
+        }
+        
+        String keyword = request.getParameter("keyword");
+        System.out.println("Search keyword for applications: " + keyword);
+        
+        List<Application> applications;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            applications = applicationService.searchApplications(keyword.trim(), recruiterId);
+            request.setAttribute("searchKeyword", keyword);
+            request.setAttribute("searchType", "applications");
+        } else {
+            applications = applicationService.getApplicationsByUser(recruiterId);
+        }
+        
+        request.setAttribute("applications", applications);
+        request.setAttribute("totalApplications", applications.size());
+        
+        request.getRequestDispatcher("viewapplications.jsp").forward(request, response);
+    }
+    
+    private void filterApplications(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("filterApplications method called");
+        
+        HttpSession session = request.getSession();
+        String recruiterId = (String) session.getAttribute("user_id");
+        
+        if (recruiterId == null) {
+            response.sendRedirect("./auth/login.jsp");
+            return;
+        }
+        
+        String status = request.getParameter("status");
+        System.out.println("Filter applications by status: " + status);
+        
+        List<Application> applications;
+        if (status != null && !status.trim().isEmpty() && !status.equals("ALL")) {
+            applications = applicationService.searchApplicationsByStatus(status.trim(), recruiterId);
+            request.setAttribute("filterStatus", status);
+            request.setAttribute("searchType", "filter");
+        } else {
+            applications = applicationService.getApplicationsByUser(recruiterId);
+        }
+        
+        request.setAttribute("applications", applications);
+        request.setAttribute("totalApplications", applications.size());
+        
+        request.getRequestDispatcher("viewapplications.jsp").forward(request, response);
+    }
+
+    // ... REST OF YOUR EXISTING METHODS (manageApplication, viewApplications, handleEdit, etc.) ...
+    // Keep all your existing methods exactly as they were
 
     private void manageApplication(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -115,15 +255,14 @@ public class RecruiterServlet extends HttpServlet {
         } 
         else {
             response.sendRedirect("RecruiterServlet?action=viewApplications&error=Failed+to+Update+Status");
-          }
+        }
     }
-
 
     private void viewApplications(HttpServletRequest request, HttpServletResponse response) 
     {
         try {
-        	   System.out.println("view application method call");
-        	   
+            System.out.println("view application method call");
+            
             HttpSession session = request.getSession();            
             String recruiterId = (String) session.getAttribute("user_id");
      
@@ -138,6 +277,7 @@ public class RecruiterServlet extends HttpServlet {
             List<Application> applications = applicationService.getApplicationsByUser(recruiterId);
 
             request.setAttribute("applications", applications);
+            request.setAttribute("totalApplications", applications.size());
             
             request.getRequestDispatcher("viewapplications.jsp").forward(request, response);
 
@@ -153,9 +293,10 @@ public class RecruiterServlet extends HttpServlet {
         }
     }
 
+    // ... ALL YOUR OTHER EXISTING METHODS (handleEdit, handleDelete, handleUpdate, handlePostJob, jobList, getDashboardCounts) ...
+    // Keep them exactly as they were in your previous code
 
-    
-	private void handleEdit(HttpServletRequest request, HttpServletResponse response)
+    private void handleEdit(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String jobId = request.getParameter("job_id");
         System.out.println("Edit action for job ID: " + jobId);
@@ -167,7 +308,6 @@ public class RecruiterServlet extends HttpServlet {
         jobList(request, response);
     }
 
-	
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -185,8 +325,6 @@ public class RecruiterServlet extends HttpServlet {
         response.sendRedirect("RecruiterServlet?action=managejob");
     }
 
-    
-    
     private void handleUpdate(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -216,7 +354,6 @@ public class RecruiterServlet extends HttpServlet {
         }       
         response.sendRedirect("RecruiterServlet?action=managejob");
     }
-    
 
     private void handlePostJob(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -302,7 +439,66 @@ public class RecruiterServlet extends HttpServlet {
         request.setAttribute("jobs", jobsPage);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalJobs", allJobs.size());
 
         request.getRequestDispatcher("ManageJobs.jsp").forward(request, response);
+    }
+    
+    protected void getDashboardCounts(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        System.out.println("getDashboardCounts method called");
+        
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("session");
+        
+        if (user == null) {
+            System.out.println("User not found in session, redirecting to login");
+            response.sendRedirect("auth/login.jsp");
+            return;
+        }
+        
+        System.out.println("Getting dashboard counts for user: " + user.getUser_id());
+        
+        try {
+            Map<String, Integer> counts = applicationDao.getDashboardCounts(user.getUser_id());
+            
+            int jobCount = counts.getOrDefault("job_count", 0);
+            int applicationCount = counts.getOrDefault("application_count", 0);
+            int shortlistedCount = counts.getOrDefault("shortlisted_count", 0);
+            int rejectedCount = counts.getOrDefault("rejected_count", 0);
+            
+            System.out.println("Dashboard counts - Jobs: " + jobCount + 
+                             ", Applications: " + applicationCount + 
+                             ", Shortlisted: " + shortlistedCount + 
+                             ", Rejected: " + rejectedCount);
+            
+            request.setAttribute("jobCount", jobCount);
+            request.setAttribute("applicationCount", applicationCount);
+            request.setAttribute("shortlistedCount", shortlistedCount);
+            request.setAttribute("rejectedCount", rejectedCount);
+            
+            // Get recent applications for the dashboard
+            List<Application> recentApplications = applicationDao.getApplicationsById(user.getUser_id());
+            request.setAttribute("recentApplications", recentApplications);
+            
+            // Get today's applications count
+            int todayApplications = applicationDao.countTodaysApplications(user.getUser_id());
+            request.setAttribute("todayApplications", todayApplications);
+            
+            request.getRequestDispatcher("recruiter.jsp").forward(request, response);
+            
+        } catch (Exception e) {
+            System.err.println("Error in getDashboardCounts: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback to default values in case of error
+            request.setAttribute("jobCount", 0);
+            request.setAttribute("applicationCount", 0);
+            request.setAttribute("shortlistedCount", 0);
+            request.setAttribute("rejectedCount", 0);
+            request.setAttribute("recentApplications", new java.util.ArrayList<>());
+            request.setAttribute("todayApplications", 0);
+            request.getRequestDispatcher("recruiter.jsp").forward(request, response);
+        }
     }
 }

@@ -63,4 +63,13 @@ public class ApplicationServiceImpl implements IApplicationService {
 		return applicationDao.updateApplicationStatus(applicationId, status);
 	}
 
+	@Override
+    public List<Application> searchApplications(String keyword, String recruiterId) {
+        return applicationDao.searchApplications(keyword, recruiterId);
+    }
+    
+    @Override
+    public List<Application> searchApplicationsByStatus(String status, String recruiterId) {
+        return applicationDao.searchApplicationsByStatus(status, recruiterId);
+    }
 }

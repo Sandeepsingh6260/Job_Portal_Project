@@ -12,4 +12,6 @@ public interface IUserDao {
 	boolean UpdateUser(User user);
 
 	boolean UpdateCompany(Company company);
+
+	public boolean isUserBlocked(String userId);
 }

@@ -1,5 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%-- Blocked User Message --%>
+<%
+String errorParam = request.getParameter("error");
+if ("blocked".equals(errorParam)) {
+%>
+    <div class="alert alert-danger">
+        <i class="fas fa-ban"></i>
+        Your account has been blocked. Please contact administrator.
+    </div>
+<%
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>

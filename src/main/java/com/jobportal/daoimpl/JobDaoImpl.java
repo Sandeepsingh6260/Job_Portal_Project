@@ -172,6 +172,49 @@ public class JobDaoImpl implements IJobDao {
     	        }
     	    }
 
-    
+    	 
+ 	    public List<Job> searchJobs(String keyword, String userId) {
+ 	        List<Job> jobs = new ArrayList<>();
+ 	        
+ 	      String  sql = "SELECT * FROM job WHERE user_id = ? AND isDeleted = false " +
+ 	              "AND (title LIKE ? OR description LIKE ? OR location LIKE ? " +
+ 	              "OR job_type LIKE ? OR experience_required LIKE ?) " +
+ 	              "ORDER BY created_at DESC";
+ 	        
+ 	        try {
+ 	            PreparedStatement pst = con.prepareStatement(sql);
+ 	            pst.setString(1, userId);
+ 	            String searchPattern = "%" + keyword + "%";
+ 	            pst.setString(2, searchPattern);
+ 	            pst.setString(3, searchPattern);
+ 	            pst.setString(4, searchPattern);
+ 	            pst.setString(5, searchPattern);
+ 	            pst.setString(6, searchPattern);
+ 	            
+ 	            ResultSet rs = pst.executeQuery();
+ 	            
+ 	            while (rs.next()) {
+ 	                Job job = new Job();
+ 	                job.setId(rs.getString("job_id"));
+ 	                job.setTitle(rs.getString("title"));
+ 	                job.setDescription(rs.getString("description"));
+ 	                job.setLocation(rs.getString("location"));
+ 	                job.setSalary(rs.getDouble("salary"));
+ 	                job.setJob_type(rs.getString("job_type"));
+ 	                job.setExperience_required(rs.getString("experience_required"));
+ 	                job.setMobile_no(rs.getString("mobile_no"));
+ 	                job.setUser_id(rs.getString("user_id"));
+ 	                job.setCreated_at(rs.getTimestamp("created_at"));
+ 	                job.setUpdated_at(rs.getTimestamp("updated_at"));
+ 	                
+ 	                jobs.add(job);
+ 	            }
+ 	            
+ 	        } catch (SQLException e) {
+ 	            e.printStackTrace();
+ 	        }
+ 	        
+ 	        return jobs;
+ 	    }
     
 }

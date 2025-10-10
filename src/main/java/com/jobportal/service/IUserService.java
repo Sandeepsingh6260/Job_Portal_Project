@@ -12,4 +12,5 @@ public interface IUserService {
 
 	boolean UpdateUserAndCompany(User user, Company company);
 
+	boolean isUserBlocked(String userId);
 }

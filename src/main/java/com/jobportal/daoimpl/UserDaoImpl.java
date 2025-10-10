@@ -115,7 +115,7 @@ public class UserDaoImpl implements IUserDao {
         String sql = "UPDATE users SET user_name=?, user_password=?, location=? WHERE user_id=?";
         try (PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setString(1, user.getUser_name());
-            pst.setString(2, user.getUser_password()); // पहले से encoded password
+            pst.setString(2, user.getUser_password());
             pst.setString(3, user.getLocation());
             pst.setString(4, user.getUser_id());
 
@@ -151,19 +151,15 @@ public class UserDaoImpl implements IUserDao {
     
     public Boolean UpdateUserAndCompany(User user, Company company) {
         try {
-            // Update User
         	
              sql = "UPDATE users SET user_name=?, user_password=?, location=? WHERE user_id=?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, user.getUser_name());
-            pst.setString(2, user.getUser_password()); // Already BCrypt encoded
+            pst.setString(2, user.getUser_password());
             pst.setString(3, user.getLocation());
             pst.setString(4, user.getUser_id());
             int userUpdate = pst.executeUpdate();
-            System.out.println("User update count: " + userUpdate);
-
-            // Update Company if RECRUITER
-            
+            System.out.println("User update count: " + userUpdate);            
             
             if (user.getUser_role() == RoleType.RECRUITER && company != null) {
                 sql = "UPDATE company SET company_name=?, company_description=?, company_location=?, phoneNo=? WHERE company_id=?";
@@ -179,7 +175,33 @@ public class UserDaoImpl implements IUserDao {
 
             return true;
         } catch (SQLException e) {
-            e.printStackTrace(); // यहां exception देखो
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public boolean isUserBlocked(String userId) {
+        sql = "SELECT status FROM users WHERE user_id = ? AND isDeleted = false";
+        try {
+            pst = con.prepareStatement(sql);
+            pst.setString(1, userId);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                boolean status = rs.getBoolean("status");
+                System.out.println("User status from DB - UserID: " + userId + ", Status: " + status);
+                // Return true if status is false (blocked), false if status is true (active)
+                return !status;
+            }
+            
+            // User not found in database
+            System.out.println("User not found in database: " + userId);
+            return false;
+            
+        } catch (SQLException e) {
+            System.err.println("SQL Error checking user block status: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

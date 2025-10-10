@@ -61,8 +61,11 @@ public class UserServiceImpl implements IUserService {
 
         return userUpdated && companyUpdated;
     }
-	
-	
-	
+
+
+	@Override
+	public boolean isUserBlocked(String userId) {
+		return userService.isUserBlocked(userId);
+	}
 
 }
