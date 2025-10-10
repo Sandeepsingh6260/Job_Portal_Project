@@ -14,7 +14,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url("https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg") no-repeat center center/cover;
+    background: url("https://images
+    
+    .pexels.com/photos/3184465/pexels-photo-3184465.jpeg") no-repeat center center/cover;
     font-family: "Segoe UI", sans-serif;
 }
 
